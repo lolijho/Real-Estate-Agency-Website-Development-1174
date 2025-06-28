@@ -51,8 +51,8 @@ const Contatti = () => {
     {
       icon: FiMail,
       title: "Email",
-      content: "info@casabella.it",
-      link: "mailto:info@casabella.it"
+      content: "info@affittiurbi.it",
+      link: "mailto:info@affittiurbi.it"
     },
     {
       icon: FiClock,

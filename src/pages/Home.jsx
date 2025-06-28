@@ -41,7 +41,7 @@ const Home = () => {
                 Trova la Casa dei Tuoi Sogni
               </h1>
               <p className="text-xl md:text-2xl mb-8 text-gray-200">
-                Con Casa Bella, il tuo nuovo inizio è a portata di mano
+                Con Affitti Urbi, il tuo nuovo inizio è a portata di mano
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -137,7 +137,7 @@ const Home = () => {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Perché Scegliere Casa Bella
+              Perché Scegliere Affitti Urbi
             </h2>
             <p className="text-xl text-gray-600">
               La nostra esperienza al tuo servizio

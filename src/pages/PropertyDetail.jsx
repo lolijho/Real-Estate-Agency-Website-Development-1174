@@ -315,7 +315,7 @@ const PropertyDetail = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-white rounded-lg shadow-md p-6"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Casa Bella</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Affitti Urbi</h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <SafeIcon icon={FiMapPin} className="h-4 w-4 text-gray-400" />
@@ -327,7 +327,7 @@ const PropertyDetail = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <SafeIcon icon={FiMail} className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">info@casabella.it</span>
+                  <span className="text-gray-600">info@affittiurbi.it</span>
                 </div>
               </div>
             </motion.div>

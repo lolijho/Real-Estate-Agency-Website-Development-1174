@@ -28,7 +28,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <SafeIcon icon={FiHome} className="h-8 w-8 text-primary-600" />
-            <span className="text-2xl font-bold text-gray-900">Casa Bella</span>
+            <span className="text-2xl font-bold text-gray-900">Affitti Urbi</span>
           </Link>
 
           {/* Desktop Navigation */}

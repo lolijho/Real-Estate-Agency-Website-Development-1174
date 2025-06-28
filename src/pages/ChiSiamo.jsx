@@ -68,7 +68,7 @@ const ChiSiamo = () => {
           >
             <h1 className="text-5xl font-bold mb-6">Chi Siamo</h1>
             <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-              Da oltre 25 anni, Casa Bella è il punto di riferimento per il mercato immobiliare a Milano, 
+              Da oltre 25 anni, Affitti Urbi è il punto di riferimento per il mercato immobiliare a Milano, 
               con un team di professionisti dedicati al successo dei nostri clienti.
             </p>
           </motion.div>
@@ -86,7 +86,7 @@ const ChiSiamo = () => {
             >
               <h2 className="text-4xl font-bold text-gray-900 mb-6">La Nostra Storia</h2>
               <p className="text-lg text-gray-600 mb-6">
-                Fondata nel 1995 da Marco Rossi, Casa Bella nasce dalla passione per l'immobiliare 
+                Fondata nel 1995 da Marco Rossi, Affitti Urbi nasce dalla passione per l'immobiliare 
                 e dalla volontà di offrire un servizio di eccellenza nel mercato milanese.
               </p>
               <p className="text-lg text-gray-600 mb-6">
@@ -113,7 +113,7 @@ const ChiSiamo = () => {
             >
               <img
                 src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80"
-                alt="Ufficio Casa Bella"
+                alt="Ufficio Affitti Urbi"
                 className="rounded-lg shadow-lg"
               />
             </motion.div>
