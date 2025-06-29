@@ -13,6 +13,7 @@
   "dependencies": {
     "@libsql/client": "^0.15.9",
     "@questlabs/react-sdk": "^2.1.9",
+    "@vercel/blob": "^1.1.1",
     "date-fns": "4.1.0",
     "echarts": "^5.5.0",
     "echarts-for-react": "^3.0.2",

@@ -3,11 +3,22 @@ import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
+import ImageUpload from './ImageUpload';
 
 const { FiSave, FiX, FiPlus } = FiIcons;
 
 const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
-  const [imageUrls, setImageUrls] = useState(initialData?.images || ['']);
+  // Converti le immagini dal database in formato compatibile con ImageUpload
+  const initializeImages = (images) => {
+    if (!images || images.length === 0) return [];
+    return images.map((url, index) => ({
+      id: `existing-${index}-${url}`,
+      url: url,
+      uploading: false
+    }));
+  };
+
+  const [images, setImages] = useState(initializeImages(initialData?.images));
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -28,35 +39,31 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
         province: initialData.province || 'MI',
         features: featuresString
       });
-      setImageUrls(initialData.images || ['']);
+      
+      // Aggiorna le immagini
+      setImages(initializeImages(initialData.images));
     } else {
       reset({
         type: 'vendita',
         energyClass: 'A',
         province: 'MI'
       });
-      setImageUrls(['']);
+      setImages([]);
     }
   }, [initialData, reset]);
 
-  const addImageUrl = () => {
-    setImageUrls([...imageUrls, '']);
-  };
-
-  const removeImageUrl = (index) => {
-    setImageUrls(imageUrls.filter((_, i) => i !== index));
-  };
-
-  const updateImageUrl = (index, value) => {
-    const newUrls = [...imageUrls];
-    newUrls[index] = value;
-    setImageUrls(newUrls);
+  // Gestione immagini tramite ImageUpload component
+  const handleImagesChange = (newImages) => {
+    setImages(newImages);
   };
 
   const onFormSubmit = (data) => {
     console.log('Form submitted with data:', data);
     
-    const validImageUrls = imageUrls.filter(url => url.trim() !== '');
+    // Estrai gli URL dalle immagini (solo quelle caricate, non quelle in uploading)
+    const validImageUrls = images
+      .filter(img => img.url && !img.uploading)
+      .map(img => img.url);
     
     // Gestisci features con protezione totale dagli errori
     let processedFeatures = [];
@@ -336,38 +343,19 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
             />
           </div>
 
-          {/* Images */}
+          {/* Images Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              URL Immagini
+              Immagini Immobile
             </label>
-            {imageUrls.map((url, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <input
-                  value={url}
-                  onChange={(e) => updateImageUrl(index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="https://example.com/image.jpg"
-                />
-                {imageUrls.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeImageUrl(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <SafeIcon icon={FiX} className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addImageUrl}
-              className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-            >
-              <SafeIcon icon={FiPlus} className="h-4 w-4" />
-              <span>Aggiungi Immagine</span>
-            </button>
+            <ImageUpload
+              images={images}
+              onImagesChange={handleImagesChange}
+              maxImages={8}
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Carica fino a 8 immagini dell'immobile. La prima immagine sarà utilizzata come copertina.
+            </p>
           </div>
 
           {/* Featured Checkbox */}
