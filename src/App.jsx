@@ -15,6 +15,20 @@ import AdminLogin from './pages/AdminLogin';
 import { PropertyProvider } from './context/PropertyContext';
 import { AuthProvider } from './context/AuthContext';
 
+// Componente di test semplice
+const TestPage = () => (
+  <div style={{ padding: '20px', backgroundColor: 'white', minHeight: '100vh' }}>
+    <h1>🎉 SITO FUNZIONANTE!</h1>
+    <p>Se vedi questo messaggio, il sito funziona.</p>
+    <p>Data: {new Date().toLocaleString()}</p>
+    <div style={{ marginTop: '20px' }}>
+      <button style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>
+        Test Button
+      </button>
+    </div>
+  </div>
+);
+
 function App() {
   return (
     <AuthProvider>
@@ -28,6 +42,7 @@ function App() {
               transition={{ duration: 0.3 }}
             >
               <Routes>
+                <Route path="*" element={<TestPage />} />
                 <Route path="/" element={<Home />} />
                 <Route path="/vendite" element={<Vendite />} />
                 <Route path="/affitti" element={<Affitti />} />
