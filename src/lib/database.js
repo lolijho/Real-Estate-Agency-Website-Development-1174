@@ -1,9 +1,9 @@
 import { createClient } from '@libsql/client';
 
-// Configurazione database
+// Configurazione database con fallback sicuro
 const client = createClient({
-  url: process.env.VITE_TURSO_DATABASE_URL,
-  authToken: process.env.VITE_TURSO_AUTH_TOKEN,
+  url: process.env.VITE_TURSO_DATABASE_URL || 'file:local.db',
+  authToken: process.env.VITE_TURSO_AUTH_TOKEN || '',
 });
 
 // Schema per la tabella properties

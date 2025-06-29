@@ -22,17 +22,28 @@ export const AuthProvider = ({ children }) => {
 
   // Controlla se l'utente è già autenticato al caricamento
   useEffect(() => {
-    const adminToken = localStorage.getItem('admin_token');
-    if (adminToken === 'authenticated') {
-      setIsAdmin(true);
+    try {
+      const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+      if (adminToken === 'authenticated') {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Errore accesso localStorage:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = (email, password) => {
     if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
       setIsAdmin(true);
-      localStorage.setItem('admin_token', 'authenticated');
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('admin_token', 'authenticated');
+        }
+      } catch (error) {
+        console.error('Errore salvataggio localStorage:', error);
+      }
       return { success: true };
     }
     return { success: false, error: 'Credenziali non valide' };
@@ -40,7 +51,13 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setIsAdmin(false);
-    localStorage.removeItem('admin_token');
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('admin_token');
+      }
+    } catch (error) {
+      console.error('Errore rimozione localStorage:', error);
+    }
   };
 
   const value = {
