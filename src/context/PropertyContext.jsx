@@ -13,6 +13,7 @@ export const useProperty = () => {
 
 export const PropertyProvider = ({ children }) => {
   const [properties, setProperties] = useState([]);
+  const [featuredProperties, setFeaturedProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Inizializza database e carica proprietà
@@ -24,14 +25,18 @@ export const PropertyProvider = ({ children }) => {
         
         // Carica proprietà esistenti
         const existingProperties = await propertyService.getAll();
+        const featuredProps = await propertyService.getFeatured();
         
         // Se non ci sono proprietà, aggiungi dati di esempio
         if (existingProperties.length === 0) {
           await seedSampleData();
           const updatedProperties = await propertyService.getAll();
+          const updatedFeatured = await propertyService.getFeatured();
           setProperties(updatedProperties);
+          setFeaturedProperties(updatedFeatured);
         } else {
           setProperties(existingProperties);
+          setFeaturedProperties(featuredProps);
         }
       } catch (error) {
         console.error('Errore inizializzazione database:', error);
@@ -67,7 +72,8 @@ export const PropertyProvider = ({ children }) => {
         images: [
           "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
           "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80"
-        ]
+        ],
+        featured: true
       },
       {
         title: "Villa con Giardino",
@@ -88,7 +94,8 @@ export const PropertyProvider = ({ children }) => {
         images: [
           "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
           "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80"
-        ]
+        ],
+        featured: true
       },
       {
         title: "Bilocale Luminoso",
@@ -109,7 +116,8 @@ export const PropertyProvider = ({ children }) => {
         images: [
           "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
           "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
-        ]
+        ],
+        featured: false
       },
       {
         title: "Trilocale Zona Navigli",
@@ -130,7 +138,8 @@ export const PropertyProvider = ({ children }) => {
         images: [
           "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
           "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
-        ]
+        ],
+        featured: true
       }
     ];
 
@@ -170,6 +179,12 @@ export const PropertyProvider = ({ children }) => {
       const id = await propertyService.add(propertyData);
       const newProperty = await propertyService.getById(id);
       setProperties(prev => [newProperty, ...prev]);
+      
+      // Aggiorna anche featuredProperties se è featured
+      if (newProperty.featured) {
+        const updatedFeatured = await propertyService.getFeatured();
+        setFeaturedProperties(updatedFeatured);
+      }
     } catch (error) {
       console.error('Errore aggiunta proprietà:', error);
       // Fallback locale
@@ -189,6 +204,10 @@ export const PropertyProvider = ({ children }) => {
       setProperties(prev => prev.map(prop => 
         prop.id === id ? updated : prop
       ));
+      
+      // Aggiorna featuredProperties
+      const updatedFeatured = await propertyService.getFeatured();
+      setFeaturedProperties(updatedFeatured);
     } catch (error) {
       console.error('Errore aggiornamento proprietà:', error);
       // Fallback locale
@@ -202,10 +221,12 @@ export const PropertyProvider = ({ children }) => {
     try {
       await propertyService.delete(id);
       setProperties(prev => prev.filter(prop => prop.id !== id));
+      setFeaturedProperties(prev => prev.filter(prop => prop.id !== id));
     } catch (error) {
       console.error('Errore eliminazione proprietà:', error);
       // Fallback locale
       setProperties(prev => prev.filter(prop => prop.id !== id));
+      setFeaturedProperties(prev => prev.filter(prop => prop.id !== id));
     }
   };
 
@@ -220,6 +241,7 @@ export const PropertyProvider = ({ children }) => {
   return (
     <PropertyContext.Provider value={{
       properties,
+      featuredProperties,
       loading,
       addProperty,
       updateProperty,

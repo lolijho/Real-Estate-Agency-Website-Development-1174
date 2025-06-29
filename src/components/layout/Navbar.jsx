@@ -3,12 +3,19 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
+import { useAuth } from '../../context/AuthContext';
 
-const { FiHome, FiMenu, FiX, FiSettings } = FiIcons;
+const { FiHome, FiMenu, FiX, FiSettings, FiLogOut } = FiIcons;
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { isAdmin, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
 
   const navItems = [
     { name: 'Home', path: '/', icon: FiHome },
@@ -47,6 +54,17 @@ const Navbar = () => {
                 <span>{item.name}</span>
               </Link>
             ))}
+            
+            {/* Admin Logout Button */}
+            {isAdmin && (
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
+              >
+                <SafeIcon icon={FiLogOut} className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -84,6 +102,17 @@ const Navbar = () => {
                   <span>{item.name}</span>
                 </Link>
               ))}
+              
+              {/* Mobile Admin Logout Button */}
+              {isAdmin && (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors w-full text-left"
+                >
+                  <SafeIcon icon={FiLogOut} className="h-4 w-4" />
+                  <span>Logout Admin</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}

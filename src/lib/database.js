@@ -29,6 +29,7 @@ export const createPropertiesTable = async () => {
         features TEXT, -- JSON array come stringa
         images TEXT, -- JSON array come stringa
         status TEXT DEFAULT 'available', -- 'available', 'sold', 'rented'
+        featured BOOLEAN DEFAULT FALSE, -- Se mostrare in homepage
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -68,11 +69,51 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
+        featured: Boolean(row.featured),
         createdAt: row.created_at,
         updatedAt: row.updated_at
       }));
     } catch (error) {
       console.error('Errore nel recupero proprietà:', error);
+      return [];
+    }
+  },
+
+  // Ottieni proprietà in evidenza per homepage
+  async getFeatured() {
+    try {
+      const result = await client.execute(`
+        SELECT * FROM properties 
+        WHERE featured = 1 AND status = 'available'
+        ORDER BY created_at DESC
+        LIMIT 6
+      `);
+      
+      return result.rows.map(row => ({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        price: row.price,
+        type: row.type,
+        address: row.address,
+        city: row.city,
+        province: row.province,
+        bedrooms: row.bedrooms,
+        bathrooms: row.bathrooms,
+        size: row.size,
+        floor: row.floor,
+        totalFloors: row.total_floors,
+        year: row.year,
+        energyClass: row.energy_class,
+        features: row.features ? JSON.parse(row.features) : [],
+        images: row.images ? JSON.parse(row.images) : [],
+        status: row.status,
+        featured: Boolean(row.featured),
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      }));
+    } catch (error) {
+      console.error('Errore nel recupero proprietà in evidenza:', error);
       return [];
     }
   },
@@ -104,6 +145,7 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
+        featured: Boolean(row.featured),
         createdAt: row.created_at,
         updatedAt: row.updated_at
       }));
@@ -143,6 +185,7 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
+        featured: Boolean(row.featured),
         createdAt: row.created_at,
         updatedAt: row.updated_at
       };
@@ -160,8 +203,8 @@ export const propertyService = {
           INSERT INTO properties (
             title, description, price, type, address, city, province,
             bedrooms, bathrooms, size, floor, total_floors, year,
-            energy_class, features, images, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            energy_class, features, images, status, featured
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         args: [
           property.title,
@@ -180,7 +223,8 @@ export const propertyService = {
           property.energyClass || 'A',
           JSON.stringify(property.features || []),
           JSON.stringify(property.images || []),
-          'available'
+          'available',
+          Boolean(property.featured) ? 1 : 0
         ]
       });
       
@@ -200,7 +244,7 @@ export const propertyService = {
             title = ?, description = ?, price = ?, type = ?, address = ?,
             city = ?, province = ?, bedrooms = ?, bathrooms = ?, size = ?,
             floor = ?, total_floors = ?, year = ?, energy_class = ?,
-            features = ?, images = ?, updated_at = CURRENT_TIMESTAMP
+            features = ?, images = ?, featured = ?, updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `,
         args: [
@@ -220,6 +264,7 @@ export const propertyService = {
           property.energyClass || 'A',
           JSON.stringify(property.features || []),
           JSON.stringify(property.images || []),
+          Boolean(property.featured) ? 1 : 0,
           id
         ]
       });

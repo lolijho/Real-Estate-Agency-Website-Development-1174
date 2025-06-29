@@ -280,8 +280,26 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
             </button>
           </div>
 
+          {/* Featured Checkbox */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="featured"
+                {...register('featured')}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+                🌟 Mostra in Homepage (Immobile in Evidenza)
+              </label>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Seleziona questa opzione per far apparire l'immobile nella sezione "Immobili in Evidenza" della homepage
+            </p>
+          </div>
+
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 col-span-1 md:col-span-2">
             <button
               type="button"
               onClick={onCancel}

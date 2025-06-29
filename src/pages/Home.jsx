@@ -9,8 +9,7 @@ import { useProperty } from '../context/PropertyContext';
 const { FiSearch, FiTrendingUp, FiShield, FiHeart, FiArrowRight } = FiIcons;
 
 const Home = () => {
-  const { properties } = useProperty();
-  const featuredProperties = properties.slice(0, 3);
+  const { featuredProperties } = useProperty();
 
   const stats = [
     { label: 'Immobili Venduti', value: '500+', icon: FiTrendingUp },
