@@ -1,19 +1,30 @@
 import { createClient } from '@libsql/client';
 
-// Configurazione database solo se variabili presenti
-const isDatabaseConfigured = process.env.VITE_TURSO_DATABASE_URL && process.env.VITE_TURSO_AUTH_TOKEN;
+// Configurazione database con supporto import.meta.env per Vite
+const getEnvVar = (key) => {
+  // Prova prima import.meta.env (standard Vite), poi process.env (fallback)
+  return (typeof import !== 'undefined' && import.meta?.env?.[key]) || process.env[key];
+};
+
+const DATABASE_URL = getEnvVar('VITE_TURSO_DATABASE_URL');
+const AUTH_TOKEN = getEnvVar('VITE_TURSO_AUTH_TOKEN');
+const isDatabaseConfigured = DATABASE_URL && AUTH_TOKEN;
 
 // Debug delle variabili d'ambiente
 console.log('🔧 Debug Database Config:', {
-  hasUrl: !!process.env.VITE_TURSO_DATABASE_URL,
-  hasToken: !!process.env.VITE_TURSO_AUTH_TOKEN,
-  urlStart: process.env.VITE_TURSO_DATABASE_URL?.substring(0, 20) + '...',
-  isDatabaseConfigured
+  hasUrl: !!DATABASE_URL,
+  hasToken: !!AUTH_TOKEN,
+  urlStart: DATABASE_URL?.substring(0, 20) + '...',
+  isDatabaseConfigured,
+  importMetaEnv: typeof import !== 'undefined' && !!import.meta?.env,
+  processEnv: typeof process !== 'undefined' && !!process.env,
+  allEnvVars: typeof process !== 'undefined' ? Object.keys(process.env).filter(key => key.includes('TURSO')) : [],
+  nodeEnv: getEnvVar('NODE_ENV')
 });
 
 const client = isDatabaseConfigured ? createClient({
-  url: process.env.VITE_TURSO_DATABASE_URL,
-  authToken: process.env.VITE_TURSO_AUTH_TOKEN,
+  url: DATABASE_URL,
+  authToken: AUTH_TOKEN,
 }) : null;
 
 // Schema per la tabella properties
