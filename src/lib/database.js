@@ -1,13 +1,19 @@
 import { createClient } from '@libsql/client';
 
-// Configurazione database con fallback sicuro
-const client = createClient({
-  url: process.env.VITE_TURSO_DATABASE_URL || 'file:local.db',
-  authToken: process.env.VITE_TURSO_AUTH_TOKEN || '',
-});
+// Configurazione database solo se variabili presenti
+const isDatabaseConfigured = process.env.VITE_TURSO_DATABASE_URL && process.env.VITE_TURSO_AUTH_TOKEN;
+
+const client = isDatabaseConfigured ? createClient({
+  url: process.env.VITE_TURSO_DATABASE_URL,
+  authToken: process.env.VITE_TURSO_AUTH_TOKEN,
+}) : null;
 
 // Schema per la tabella properties
 export const createPropertiesTable = async () => {
+  if (!client) {
+    console.log('Database non configurato - modalità demo');
+    return;
+  }
   try {
     await client.execute(`
       CREATE TABLE IF NOT EXISTS properties (
@@ -44,6 +50,9 @@ export const createPropertiesTable = async () => {
 export const propertyService = {
   // Ottieni tutte le proprietà
   async getAll() {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       const result = await client.execute(`
         SELECT * FROM properties 
@@ -81,6 +90,9 @@ export const propertyService = {
 
   // Ottieni proprietà in evidenza per homepage
   async getFeatured() {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       const result = await client.execute(`
         SELECT * FROM properties 
@@ -120,6 +132,9 @@ export const propertyService = {
 
   // Ottieni proprietà per tipo
   async getByType(type) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       const result = await client.execute({
         sql: `SELECT * FROM properties WHERE type = ? ORDER BY created_at DESC`,
@@ -157,6 +172,9 @@ export const propertyService = {
 
   // Ottieni singola proprietà
   async getById(id) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       const result = await client.execute({
         sql: `SELECT * FROM properties WHERE id = ?`,
@@ -197,6 +215,9 @@ export const propertyService = {
 
   // Aggiungi nuova proprietà
   async add(property) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       const result = await client.execute({
         sql: `
@@ -237,6 +258,9 @@ export const propertyService = {
 
   // Aggiorna proprietà
   async update(id, property) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       await client.execute({
         sql: `
@@ -278,6 +302,9 @@ export const propertyService = {
 
   // Elimina proprietà
   async delete(id) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
     try {
       await client.execute({
         sql: `DELETE FROM properties WHERE id = ?`,
