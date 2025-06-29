@@ -108,7 +108,7 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
-        featured: Boolean(row.featured),
+        featured: !!row.featured,
         createdAt: row.created_at,
         updatedAt: row.updated_at
       }));
@@ -145,7 +145,7 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
-        featured: Boolean(row.featured),
+        featured: !!row.featured,
         createdAt: row.created_at,
         updatedAt: row.updated_at
       }));
@@ -185,7 +185,7 @@ export const propertyService = {
         features: row.features ? JSON.parse(row.features) : [],
         images: row.images ? JSON.parse(row.images) : [],
         status: row.status,
-        featured: Boolean(row.featured),
+        featured: !!row.featured,
         createdAt: row.created_at,
         updatedAt: row.updated_at
       };
@@ -224,7 +224,7 @@ export const propertyService = {
           JSON.stringify(property.features || []),
           JSON.stringify(property.images || []),
           'available',
-          Boolean(property.featured) ? 1 : 0
+          property.featured ? 1 : 0
         ]
       });
       
@@ -264,7 +264,7 @@ export const propertyService = {
           property.energyClass || 'A',
           JSON.stringify(property.features || []),
           JSON.stringify(property.images || []),
-          Boolean(property.featured) ? 1 : 0,
+          property.featured ? 1 : 0,
           id
         ]
       });
