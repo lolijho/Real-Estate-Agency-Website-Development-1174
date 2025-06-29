@@ -58,16 +58,26 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
     
     const validImageUrls = imageUrls.filter(url => url.trim() !== '');
     
-    // Gestisci features sia come stringa che come array
+    // Gestisci features con controlli extra di sicurezza
     let processedFeatures = [];
-    if (data.features) {
+    console.log('Processing features:', { type: typeof data.features, value: data.features });
+    
+    if (data.features !== null && data.features !== undefined) {
       if (Array.isArray(data.features)) {
         // Se è già un array, usalo direttamente
+        console.log('Features is array, using directly');
         processedFeatures = data.features;
-      } else if (typeof data.features === 'string') {
-        // Se è una stringa, splittala
+      } else if (typeof data.features === 'string' && data.features.trim() !== '') {
+        // Se è una stringa non vuota, splittala
+        console.log('Features is string, splitting');
         processedFeatures = data.features.split(',').map(f => f.trim()).filter(f => f.length > 0);
+      } else {
+        console.log('Features is neither string nor array, using empty array');
+        processedFeatures = [];
       }
+    } else {
+      console.log('Features is null/undefined, using empty array');
+      processedFeatures = [];
     }
     
     const formattedData = {
