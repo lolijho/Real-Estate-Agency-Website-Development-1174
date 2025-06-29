@@ -58,25 +58,36 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
     
     const validImageUrls = imageUrls.filter(url => url.trim() !== '');
     
-    // Gestisci features con controlli extra di sicurezza
+    // Gestisci features con protezione totale dagli errori
     let processedFeatures = [];
-    console.log('Processing features:', { type: typeof data.features, value: data.features });
+    console.log('Processing features:', { type: typeof data.features, value: data.features, isArray: Array.isArray(data.features) });
     
-    if (data.features !== null && data.features !== undefined) {
-      if (Array.isArray(data.features)) {
-        // Se è già un array, usalo direttamente
-        console.log('Features is array, using directly');
-        processedFeatures = data.features;
-      } else if (typeof data.features === 'string' && data.features.trim() !== '') {
-        // Se è una stringa non vuota, splittala
-        console.log('Features is string, splitting');
-        processedFeatures = data.features.split(',').map(f => f.trim()).filter(f => f.length > 0);
+    try {
+      if (data.features !== null && data.features !== undefined) {
+        if (Array.isArray(data.features)) {
+          // Se è già un array, usalo direttamente
+          console.log('Features is array, using directly');
+          processedFeatures = [...data.features]; // Clone per sicurezza
+        } else if (typeof data.features === 'string') {
+          if (data.features.trim() !== '') {
+            // Se è una stringa non vuota, splittala
+            console.log('Features is string, splitting');
+            processedFeatures = data.features.split(',').map(f => f.trim()).filter(f => f.length > 0);
+          } else {
+            console.log('Features is empty string, using empty array');
+            processedFeatures = [];
+          }
+        } else {
+          console.log('Features is neither string nor array, converting to empty array');
+          processedFeatures = [];
+        }
       } else {
-        console.log('Features is neither string nor array, using empty array');
+        console.log('Features is null/undefined, using empty array');
         processedFeatures = [];
       }
-    } else {
-      console.log('Features is null/undefined, using empty array');
+    } catch (error) {
+      console.error('Errore nella gestione features:', error);
+      console.log('Using fallback empty array for features');
       processedFeatures = [];
     }
     
