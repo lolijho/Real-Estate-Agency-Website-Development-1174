@@ -5,15 +5,7 @@ const DATABASE_URL = import.meta.env.VITE_TURSO_DATABASE_URL;
 const AUTH_TOKEN = import.meta.env.VITE_TURSO_AUTH_TOKEN;
 const isDatabaseConfigured = DATABASE_URL && AUTH_TOKEN;
 
-// Debug delle variabili d'ambiente
-console.log('🔧 Debug Database Config:', {
-  hasUrl: !!DATABASE_URL,
-  hasToken: !!AUTH_TOKEN,
-  urlStart: DATABASE_URL ? DATABASE_URL.substring(0, 20) + '...' : 'undefined',
-  isDatabaseConfigured,
-  importMetaEnv: !!import.meta.env,
-  allImportMetaKeys: Object.keys(import.meta.env).filter(key => key.includes('TURSO'))
-});
+// Database configurato e pronto per l'uso
 
 const client = isDatabaseConfigured ? createClient({
   url: DATABASE_URL,
@@ -23,7 +15,6 @@ const client = isDatabaseConfigured ? createClient({
 // Schema per la tabella properties
 export const createPropertiesTable = async () => {
   if (!client) {
-    console.log('Database non configurato - modalità demo');
     return;
   }
   try {
