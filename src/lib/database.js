@@ -261,11 +261,13 @@ export const propertyService = {
 
   // Aggiorna proprietà
   async update(id, property) {
+    console.log('Database update called with:', { id, property });
     if (!client) {
       throw new Error('Database non configurato');
     }
     try {
-      await client.execute({
+      console.log('Executing UPDATE query...');
+      const result = await client.execute({
         sql: `
           UPDATE properties SET
             title = ?, description = ?, price = ?, type = ?, address = ?,
@@ -296,6 +298,8 @@ export const propertyService = {
         ]
       });
       
+      console.log('UPDATE query result:', result);
+      console.log('Property updated successfully in database');
       return true;
     } catch (error) {
       console.error('Errore nell\'aggiornamento proprietà:', error);

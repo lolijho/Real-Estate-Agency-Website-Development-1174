@@ -202,22 +202,32 @@ export const PropertyProvider = ({ children }) => {
   };
 
   const updateProperty = async (id, updatedProperty) => {
+    console.log('PropertyContext updateProperty called with:', { id, updatedProperty });
     try {
+      console.log('Calling propertyService.update...');
       await propertyService.update(id, updatedProperty);
+      console.log('propertyService.update completed, fetching updated property...');
+      
       const updated = await propertyService.getById(id);
+      console.log('Updated property fetched:', updated);
+      
       setProperties(prev => prev.map(prop => 
         prop.id === id ? updated : prop
       ));
       
       // Aggiorna featuredProperties
+      console.log('Updating featured properties...');
       const updatedFeatured = await propertyService.getFeatured();
       setFeaturedProperties(updatedFeatured);
+      console.log('Featured properties updated successfully');
     } catch (error) {
       console.error('Errore aggiornamento proprietà:', error);
       // Fallback locale
+      console.log('Using fallback local update');
       setProperties(prev => prev.map(prop => 
-        prop.id === id ? { ...prop, ...updatedProperty } : prop
+        prop.id === id ? { ...prop, ...updatedProperty, id } : prop
       ));
+      throw error; // Re-throw per far gestire l'errore al chiamante
     }
   };
 

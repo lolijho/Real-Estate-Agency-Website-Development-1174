@@ -22,10 +22,17 @@ const GestioneAnnunci = () => {
     setShowForm(false);
   };
 
-  const handleEditProperty = (propertyData) => {
-    updateProperty(editingProperty.id, propertyData);
-    setEditingProperty(null);
-    setShowForm(false);
+  const handleEditProperty = async (propertyData) => {
+    console.log('handleEditProperty called with:', { id: editingProperty.id, data: propertyData });
+    try {
+      await updateProperty(editingProperty.id, propertyData);
+      console.log('Property updated successfully');
+      setEditingProperty(null);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Errore nell\'aggiornamento:', error);
+      alert('Errore nell\'aggiornamento dell\'immobile. Controlla la console per maggiori dettagli.');
+    }
   };
 
   const handleDeleteProperty = (id) => {
@@ -216,7 +223,7 @@ const GestioneAnnunci = () => {
                         {property.type === 'affitto' && '/mese'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {property.location}
+                        {property.city}, {property.province || 'MI'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {property.bedrooms} cam • {property.bathrooms} bagni • {property.size} m²
@@ -232,6 +239,7 @@ const GestioneAnnunci = () => {
                           </a>
                           <button
                             onClick={() => {
+                              console.log('Setting editingProperty to:', property);
                               setEditingProperty(property);
                               setShowForm(true);
                             }}

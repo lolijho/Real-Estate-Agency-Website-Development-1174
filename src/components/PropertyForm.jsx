@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
@@ -10,11 +10,34 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
   const [imageUrls, setImageUrls] = useState(initialData?.images || ['']);
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
-    defaultValues: initialData || {
+    defaultValues: {
       type: 'vendita',
       energyClass: 'A'
     }
   });
+
+  useEffect(() => {
+    if (initialData) {
+      // Converti features da array a stringa per l'input
+      const featuresString = Array.isArray(initialData.features) 
+        ? initialData.features.join(', ') 
+        : initialData.features || '';
+      
+      reset({
+        ...initialData,
+        province: initialData.province || 'MI',
+        features: featuresString
+      });
+      setImageUrls(initialData.images || ['']);
+    } else {
+      reset({
+        type: 'vendita',
+        energyClass: 'A',
+        province: 'MI'
+      });
+      setImageUrls(['']);
+    }
+  }, [initialData, reset]);
 
   const addImageUrl = () => {
     setImageUrls([...imageUrls, '']);
@@ -31,21 +54,43 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
   };
 
   const onFormSubmit = (data) => {
+    console.log('Form submitted with data:', data);
+    
     const validImageUrls = imageUrls.filter(url => url.trim() !== '');
-    onSubmit({
+    
+    // Gestisci features sia come stringa che come array
+    let processedFeatures = [];
+    if (data.features) {
+      if (Array.isArray(data.features)) {
+        // Se è già un array, usalo direttamente
+        processedFeatures = data.features;
+      } else if (typeof data.features === 'string') {
+        // Se è una stringa, splittala
+        processedFeatures = data.features.split(',').map(f => f.trim()).filter(f => f.length > 0);
+      }
+    }
+    
+    const formattedData = {
       ...data,
       images: validImageUrls.length > 0 ? validImageUrls : ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80"],
       price: parseFloat(data.price),
       bedrooms: parseInt(data.bedrooms),
       bathrooms: parseInt(data.bathrooms),
       size: parseInt(data.size),
-      year: parseInt(data.year),
-      floor: parseInt(data.floor),
-      totalFloors: parseInt(data.totalFloors),
-      features: data.features ? data.features.split(',').map(f => f.trim()) : []
-    });
-    reset();
-    setImageUrls(['']);
+      year: data.year ? parseInt(data.year) : null,
+      floor: data.floor ? parseInt(data.floor) : null,
+      totalFloors: data.totalFloors ? parseInt(data.totalFloors) : null,
+      features: processedFeatures
+    };
+    
+    console.log('Formatted data:', formattedData);
+    
+    try {
+      onSubmit(formattedData);
+    } catch (error) {
+      console.error('Errore nel submit del form:', error);
+      alert('Errore nell\'invio del form. Controlla la console per maggiori dettagli.');
+    }
   };
 
   return (
@@ -72,7 +117,7 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
 
         <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-6">
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Titolo *
@@ -113,14 +158,38 @@ const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Località *
+                Indirizzo *
               </label>
               <input
-                {...register('location', { required: 'La località è obbligatoria' })}
+                {...register('address', { required: 'L\'indirizzo è obbligatorio' })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Milano Centro"
+                placeholder="Via Roma 123"
               />
-              {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
+              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Città *
+              </label>
+              <input
+                {...register('city', { required: 'La città è obbligatoria' })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Milano"
+              />
+              {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Provincia
+              </label>
+              <input
+                {...register('province')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="MI"
+                maxLength={2}
+              />
             </div>
           </div>
 
