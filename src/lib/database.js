@@ -3,6 +3,14 @@ import { createClient } from '@libsql/client';
 // Configurazione database solo se variabili presenti
 const isDatabaseConfigured = process.env.VITE_TURSO_DATABASE_URL && process.env.VITE_TURSO_AUTH_TOKEN;
 
+// Debug delle variabili d'ambiente
+console.log('🔧 Debug Database Config:', {
+  hasUrl: !!process.env.VITE_TURSO_DATABASE_URL,
+  hasToken: !!process.env.VITE_TURSO_AUTH_TOKEN,
+  urlStart: process.env.VITE_TURSO_DATABASE_URL?.substring(0, 20) + '...',
+  isDatabaseConfigured
+});
+
 const client = isDatabaseConfigured ? createClient({
   url: process.env.VITE_TURSO_DATABASE_URL,
   authToken: process.env.VITE_TURSO_AUTH_TOKEN,
