@@ -15,6 +15,7 @@ export const PropertyProvider = ({ children }) => {
   const [properties, setProperties] = useState([]);
   const [featuredProperties, setFeaturedProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dbError, setDbError] = useState(null);
 
   // Inizializza database e carica proprietà
   useEffect(() => {
@@ -40,8 +41,10 @@ export const PropertyProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Errore inizializzazione database:', error);
+        setDbError('Database non configurato. Usando dati di esempio.');
         // Fallback ai dati di esempio in caso di errore
         setProperties(getSampleProperties());
+        setFeaturedProperties(getSampleProperties().filter(p => p.featured));
       } finally {
         setLoading(false);
       }
@@ -170,7 +173,8 @@ export const PropertyProvider = ({ children }) => {
       energyClass: "A",
       year: 2020,
       floor: 3,
-      totalFloors: 5
+      totalFloors: 5,
+      featured: true
     }
   ];
 
@@ -243,6 +247,7 @@ export const PropertyProvider = ({ children }) => {
       properties,
       featuredProperties,
       loading,
+      dbError,
       addProperty,
       updateProperty,
       deleteProperty,

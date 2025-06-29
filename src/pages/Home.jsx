@@ -9,7 +9,47 @@ import { useProperty } from '../context/PropertyContext';
 const { FiSearch, FiTrendingUp, FiShield, FiHeart, FiArrowRight } = FiIcons;
 
 const Home = () => {
-  const { featuredProperties } = useProperty();
+  const { featuredProperties, loading, dbError } = useProperty();
+
+  // Fallback se non ci sono immobili in evidenza
+  const displayProperties = featuredProperties.length > 0 ? featuredProperties : [
+    {
+      id: 'demo-1',
+      title: "Appartamento Moderno Centro Milano",
+      description: "Splendido appartamento nel cuore di Milano",
+      price: 350000,
+      type: "vendita",
+      address: "Via del Centro 15, Milano",
+      bedrooms: 3,
+      bathrooms: 2,
+      size: 120,
+      images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80"]
+    },
+    {
+      id: 'demo-2', 
+      title: "Villa con Giardino",
+      description: "Elegante villa con ampio giardino privato",
+      price: 750000,
+      type: "vendita", 
+      address: "Via delle Ville 23, Monza",
+      bedrooms: 4,
+      bathrooms: 3,
+      size: 250,
+      images: ["https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80"]
+    },
+    {
+      id: 'demo-3',
+      title: "Trilocale Zona Navigli", 
+      description: "Caratteristico trilocale nei Navigli",
+      price: 1800,
+      type: "affitto",
+      address: "Via Navigli 42, Milano", 
+      bedrooms: 2,
+      bathrooms: 2,
+      size: 90,
+      images: ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80"]
+    }
+  ];
 
   const stats = [
     { label: 'Immobili Venduti', value: '500+', icon: FiTrendingUp },
@@ -103,11 +143,37 @@ const Home = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProperties.map((property, index) => (
-              <PropertyCard key={property.id} property={property} index={index} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+              <p className="text-gray-600 mt-4">Caricamento immobili...</p>
+            </div>
+          ) : (
+            <>
+              {dbError && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-8">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <SafeIcon icon={FiSearch} className="h-5 w-5 text-yellow-400" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-yellow-800">
+                        Modalità Demo
+                      </h3>
+                      <div className="mt-2 text-sm text-yellow-700">
+                        <p>{dbError} Gli immobili mostrati sono solo di esempio.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {displayProperties.map((property, index) => (
+                  <PropertyCard key={property.id} property={property} index={index} />
+                ))}
+              </div>
+            </>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

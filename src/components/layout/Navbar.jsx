@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
@@ -10,6 +10,7 @@ const { FiHome, FiMenu, FiX, FiSettings, FiLogOut } = FiIcons;
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { isAdmin, logout } = useAuth();
 
   const handleLogout = () => {
@@ -17,14 +18,26 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
-  const navItems = [
+  // Accesso admin segreto con doppio click sul logo
+  const handleLogoDoubleClick = () => {
+    if (!isAdmin) {
+      navigate('/admin/login');
+    }
+  };
+
+  const publicNavItems = [
     { name: 'Home', path: '/', icon: FiHome },
     { name: 'Vendite', path: '/vendite' },
     { name: 'Affitti', path: '/affitti' },
     { name: 'Chi Siamo', path: '/chi-siamo' },
-    { name: 'Contatti', path: '/contatti' },
-    { name: 'Gestione', path: isAdmin ? '/gestione-annunci' : '/admin/login', icon: FiSettings }
+    { name: 'Contatti', path: '/contatti' }
   ];
+
+  const adminNavItems = [
+    { name: 'Gestione', path: '/gestione-annunci', icon: FiSettings }
+  ];
+
+  const navItems = isAdmin ? [...publicNavItems, ...adminNavItems] : publicNavItems;
 
   const isActive = (path) => location.pathname === path;
 
@@ -33,10 +46,26 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <SafeIcon icon={FiHome} className="h-8 w-8 text-primary-600" />
-            <span className="text-2xl font-bold text-gray-900">Affitti Urbi</span>
-          </Link>
+          <div className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
+              <SafeIcon icon={FiHome} className="h-8 w-8 text-primary-600" />
+              <span 
+                className="text-2xl font-bold text-gray-900 select-none cursor-pointer"
+                onDoubleClick={handleLogoDoubleClick}
+                title={!isAdmin ? "Doppio click per accesso admin" : ""}
+              >
+                Affitti Urbi
+              </span>
+            </Link>
+            {!isAdmin && (
+              <Link 
+                to="/admin/login"
+                className="text-xs text-gray-400 hover:text-primary-600 transition-colors ml-2"
+              >
+                Admin
+              </Link>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
