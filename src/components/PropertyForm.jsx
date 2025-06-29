@@ -5,6 +5,7 @@ import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import ImageUpload from './ImageUpload';
 
+// FORCE UPDATE - 2025-06-29 22:15 - ImageUpload Implementation Active
 const { FiSave, FiX, FiPlus } = FiIcons;
 
 const PropertyForm = ({ onSubmit, onCancel, initialData = null }) => {
