@@ -23,7 +23,7 @@ const Navbar = () => {
     { name: 'Affitti', path: '/affitti' },
     { name: 'Chi Siamo', path: '/chi-siamo' },
     { name: 'Contatti', path: '/contatti' },
-    { name: 'Gestione', path: '/gestione-annunci', icon: FiSettings }
+    { name: 'Gestione', path: isAdmin ? '/gestione-annunci' : '/admin/login', icon: FiSettings }
   ];
 
   const isActive = (path) => location.pathname === path;

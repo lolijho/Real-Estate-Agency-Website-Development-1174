@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
@@ -8,21 +8,28 @@ import { useAuth } from '../context/AuthContext';
 const { FiUser, FiLock, FiEye, FiEyeOff } = FiIcons;
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   
-  const { login } = useAuth();
+  const { login, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Reindirizza se già loggato
+  useEffect(() => {
+    if (!loading && isAdmin) {
+      navigate('/gestione-annunci');
+    }
+  }, [isAdmin, loading, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setError('');
 
-    const result = login(username, password);
+    const result = login(email, password);
     
     if (result.success) {
       navigate('/gestione-annunci');
@@ -30,8 +37,24 @@ const AdminLogin = () => {
       setError(result.error);
     }
     
-    setLoading(false);
+    setSubmitting(false);
   };
+
+  // Mostra loading se sta verificando autenticazione
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verifica accesso...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -58,19 +81,19 @@ const AdminLogin = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
               </label>
               <div className="mt-1 relative">
                 <input
-                  id="username"
-                  name="username"
-                  type="text"
+                  id="email"
+                  name="email"
+                  type="email"
                   required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Inserisci username"
+                  placeholder="Inserisci email"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <SafeIcon icon={FiUser} className="h-5 w-5 text-gray-400" />
@@ -135,16 +158,17 @@ const AdminLogin = () => {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Accesso in corso...' : 'Accedi'}
+              {submitting ? 'Accesso in corso...' : 'Accedi'}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Credenziali di test: <strong>admin / admin123</strong>
+              Email: <strong>lorecucchini@gmail.com</strong><br/>
+              Password: <strong>Ylenia040590</strong>
             </p>
           </div>
         </form>

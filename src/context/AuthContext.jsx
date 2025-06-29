@@ -16,8 +16,8 @@ export const AuthProvider = ({ children }) => {
 
   // Credenziali admin semplici (in produzione usa un sistema più sicuro)
   const ADMIN_CREDENTIALS = {
-    username: 'admin',
-    password: 'admin123'
+    email: 'lorecucchini@gmail.com',
+    password: 'Ylenia040590'
   };
 
   // Controlla se l'utente è già autenticato al caricamento
@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (username, password) => {
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+  const login = (email, password) => {
+    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
       setIsAdmin(true);
       localStorage.setItem('admin_token', 'authenticated');
       return { success: true };
