@@ -5,6 +5,8 @@ import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import PropertyCard from '../components/PropertyCard';
 import { useProperty } from '../context/PropertyContext';
+import EditableText from '../components/cms/EditableText';
+import EditableImage from '../components/cms/EditableImage';
 
 const { FiSearch, FiTrendingUp, FiShield, FiHeart, FiArrowRight } = FiIcons;
 
@@ -62,13 +64,19 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-primary-900 to-primary-700 text-white">
         <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div 
-          className="relative bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80)',
-            backgroundBlendMode: 'overlay'
-          }}
-        >
+        <div className="relative">
+          {/* Background Image Editable */}
+          <div className="absolute inset-0">
+            <EditableImage
+              sectionId="hero"
+              field="backgroundImage"
+              defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+              className="w-full h-full object-cover"
+              alt="Hero Background"
+              placeholder="Carica immagine di sfondo"
+            />
+            <div className="absolute inset-0 bg-primary-900 bg-opacity-60"></div>
+          </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -76,12 +84,22 @@ const Home = () => {
               transition={{ duration: 0.8 }}
               className="text-center"
             >
-              <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                Trova la Casa dei Tuoi Sogni
-              </h1>
-              <p className="text-xl md:text-2xl mb-8 text-gray-200">
-                Con Affitti Urbi, il tuo nuovo inizio è a portata di mano
-              </p>
+              <EditableText
+                sectionId="hero"
+                field="title"
+                defaultValue="Trova la Casa dei Tuoi Sogni"
+                tag="h1"
+                className="text-5xl md:text-6xl font-bold mb-6"
+                placeholder="Inserisci il titolo principale"
+              />
+              <EditableText
+                sectionId="hero"
+                field="subtitle"
+                defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
+                tag="p"
+                className="text-xl md:text-2xl mb-8 text-gray-200"
+                placeholder="Inserisci il sottotitolo"
+              />
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/vendite"
@@ -135,12 +153,22 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Immobili in Evidenza
-            </h2>
-            <p className="text-xl text-gray-600">
-              Scopri le nostre migliori proposte selezionate per te
-            </p>
+            <EditableText
+              sectionId="featured"
+              field="title"
+              defaultValue="Immobili in Evidenza"
+              tag="h2"
+              className="text-4xl font-bold text-gray-900 mb-4"
+              placeholder="Titolo sezione immobili"
+            />
+            <EditableText
+              sectionId="featured"
+              field="subtitle"
+              defaultValue="Scopri le nostre migliori proposte selezionate per te"
+              tag="p"
+              className="text-xl text-gray-600"
+              placeholder="Sottotitolo sezione immobili"
+            />
           </motion.div>
 
           {loading ? (
@@ -201,12 +229,22 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Perché Scegliere Affitti Urbi
-            </h2>
-            <p className="text-xl text-gray-600">
-              La nostra esperienza al tuo servizio
-            </p>
+            <EditableText
+              sectionId="services"
+              field="title"
+              defaultValue="Perché Scegliere Affitti Urbi"
+              tag="h2"
+              className="text-4xl font-bold text-gray-900 mb-4"
+              placeholder="Titolo sezione servizi"
+            />
+            <EditableText
+              sectionId="services"
+              field="subtitle"
+              defaultValue="La nostra esperienza al tuo servizio"
+              tag="p"
+              className="text-xl text-gray-600"
+              placeholder="Sottotitolo sezione servizi"
+            />
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -219,10 +257,22 @@ const Home = () => {
               <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <SafeIcon icon={FiShield} className="h-8 w-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Affidabilità</h3>
-              <p className="text-gray-600">
-                25 anni di esperienza nel settore immobiliare milanese
-              </p>
+              <EditableText
+                sectionId="services"
+                field="service1_title"
+                defaultValue="Affidabilità"
+                tag="h3"
+                className="text-xl font-semibold text-gray-900 mb-4"
+                placeholder="Titolo servizio 1"
+              />
+              <EditableText
+                sectionId="services"
+                field="service1_description"
+                defaultValue="25 anni di esperienza nel settore immobiliare milanese"
+                tag="p"
+                className="text-gray-600"
+                placeholder="Descrizione servizio 1"
+              />
             </motion.div>
 
             <motion.div
@@ -234,10 +284,22 @@ const Home = () => {
               <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <SafeIcon icon={FiHeart} className="h-8 w-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Professionalità</h3>
-              <p className="text-gray-600">
-                Team qualificato per accompagnarti in ogni fase
-              </p>
+              <EditableText
+                sectionId="services"
+                field="service2_title"
+                defaultValue="Professionalità"
+                tag="h3"
+                className="text-xl font-semibold text-gray-900 mb-4"
+                placeholder="Titolo servizio 2"
+              />
+              <EditableText
+                sectionId="services"
+                field="service2_description"
+                defaultValue="Team qualificato per accompagnarti in ogni fase"
+                tag="p"
+                className="text-gray-600"
+                placeholder="Descrizione servizio 2"
+              />
             </motion.div>
 
             <motion.div
@@ -249,10 +311,22 @@ const Home = () => {
               <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <SafeIcon icon={FiTrendingUp} className="h-8 w-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Risultati</h3>
-              <p className="text-gray-600">
-                Oltre 500 immobili venduti e 1200 clienti soddisfatti
-              </p>
+              <EditableText
+                sectionId="services"
+                field="service3_title"
+                defaultValue="Risultati"
+                tag="h3"
+                className="text-xl font-semibold text-gray-900 mb-4"
+                placeholder="Titolo servizio 3"
+              />
+              <EditableText
+                sectionId="services"
+                field="service3_description"
+                defaultValue="Oltre 500 immobili venduti e 1200 clienti soddisfatti"
+                tag="p"
+                className="text-gray-600"
+                placeholder="Descrizione servizio 3"
+              />
             </motion.div>
           </div>
         </div>
