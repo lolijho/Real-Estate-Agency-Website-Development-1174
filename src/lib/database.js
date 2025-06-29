@@ -1,6 +1,6 @@
 import { createClient } from '@libsql/client';
 
-// Configurazione database con supporto import.meta.env per Vite
+// Configurazione database con supporto import.meta.env per Vite - Updated 2025-06-29
 const DATABASE_URL = import.meta.env.VITE_TURSO_DATABASE_URL;
 const AUTH_TOKEN = import.meta.env.VITE_TURSO_AUTH_TOKEN;
 const isDatabaseConfigured = DATABASE_URL && AUTH_TOKEN;
