@@ -62,8 +62,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-900 to-primary-700 text-white min-h-[60vh] max-h-[70vh] flex items-center">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+      <section className="relative text-white flex items-center" style={{ height: '600px' }}>
         <div className="relative w-full">
           {/* Background Image Editable */}
           <div className="absolute inset-0">
@@ -75,7 +74,7 @@ const Home = () => {
               alt="Hero Background"
               placeholder="Carica immagine di sfondo"
             />
-            <div className="absolute inset-0 bg-primary-900 bg-opacity-60"></div>
+            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           </div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <motion.div
