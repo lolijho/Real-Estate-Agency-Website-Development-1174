@@ -95,7 +95,8 @@ const CMSToolbar = () => {
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg border-b border-gray-200"
+        className="fixed top-0 left-0 right-0 z-[9999] bg-white shadow-lg border-b border-gray-200"
+        style={{ height: '72px' }}
       >
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
@@ -188,7 +189,7 @@ const CMSToolbar = () => {
       />
 
       {/* Spacer when toolbar is visible */}
-      <div className="h-16" />
+      <div className="h-[72px]" />
     </>
   );
 };

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useAuth } from '../../context/AuthContext';
+import { useCMS } from '../../context/CMSContext';
 
 const { FiHome, FiMenu, FiX, FiSettings, FiLogOut } = FiIcons;
 
@@ -12,6 +13,15 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAdmin, logout } = useAuth();
+  
+  // Controlla se il CMS è disponibile (evita errori se non wrappato)
+  let cmsToolbarVisible = false;
+  try {
+    const cms = useCMS();
+    cmsToolbarVisible = isAdmin && cms; // CMS toolbar visibile solo se admin e CMS context disponibile
+  } catch (error) {
+    // CMS context non disponibile, usa solo isAdmin
+  }
 
   const handleLogout = () => {
     logout();
@@ -42,7 +52,11 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav 
+      className={`bg-white shadow-lg sticky z-40 ${
+        cmsToolbarVisible ? 'top-[72px]' : 'top-0'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
