@@ -391,7 +391,9 @@ const SectionCustomizer = ({ isOpen, onClose, selectedSection, setSelectedSectio
     getSectionColors, 
     updateSectionColors, 
     getSectionCustomCSS, 
-    updateSectionCustomCSS 
+    updateSectionCustomCSS,
+    getContent,
+    updateContent
   } = useCMS();
 
   const [currentColors, setCurrentColors] = useState({});
@@ -580,6 +582,16 @@ const SectionCustomizer = ({ isOpen, onClose, selectedSection, setSelectedSectio
                     </div>
                   </div>
 
+                  {/* Background Image Section for Hero */}
+                  {selectedSection === 'hero' && (
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">Immagine di Sfondo</h3>
+                      </div>
+                      <BackgroundImageEditor sectionId="hero" />
+                    </div>
+                  )}
+
                   {/* CSS Custom */}
                   <div>
                     <div className="flex items-center justify-between mb-4">
@@ -611,6 +623,162 @@ const SectionCustomizer = ({ isOpen, onClose, selectedSection, setSelectedSectio
         </motion.div>
       )}
     </AnimatePresence>
+  );
+};
+
+// Componente per modificare l'immagine di sfondo
+const BackgroundImageEditor = ({ sectionId }) => {
+  const { getContent, updateContent } = useCMS();
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = React.useRef(null);
+
+  const currentImageUrl = getContent(sectionId, 'backgroundImage', '');
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      // Valida il file
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Seleziona un file immagine valido');
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Il file deve essere inferiore a 5MB');
+      }
+      
+      setIsUploading(true);
+      
+      // Crea anteprima immediata
+      const preview = URL.createObjectURL(file);
+      setPreviewUrl(preview);
+      
+      // Per ora usiamo l'anteprima come URL finale
+      // In produzione qui andresti a caricare su un servizio di storage
+      updateContent(sectionId, 'backgroundImage', preview);
+      
+      setTimeout(() => {
+        setPreviewUrl(null);
+        setIsUploading(false);
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Errore upload immagine:', error);
+      alert(`Errore: ${error.message}`);
+      setPreviewUrl(null);
+      setIsUploading(false);
+    }
+  };
+
+  const handleUrlSubmit = (url) => {
+    if (url.trim() && url !== currentImageUrl) {
+      updateContent(sectionId, 'backgroundImage', url.trim());
+    }
+  };
+
+  const handleRemoveImage = () => {
+    updateContent(sectionId, 'backgroundImage', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Anteprima immagine corrente */}
+      {(previewUrl || currentImageUrl) && (
+        <div className="relative">
+          <img
+            src={previewUrl || currentImageUrl}
+            alt="Anteprima sfondo"
+            className="w-full h-32 object-cover rounded-lg border border-gray-300"
+          />
+          {isUploading && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+              <div className="text-center text-white">
+                <SafeIcon icon={FiUpload} className="h-6 w-6 animate-pulse mx-auto mb-1" />
+                <p className="text-sm">Caricamento...</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Upload area */}
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className="hidden"
+          disabled={isUploading}
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50 mx-auto"
+        >
+          <SafeIcon icon={FiUpload} className="h-4 w-4" />
+          <span>Carica Nuova Immagine</span>
+        </button>
+        <p className="text-xs text-gray-500 mt-2">JPG, PNG, WebP - Max 5MB</p>
+      </div>
+
+      {/* URL Input */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Oppure inserisci URL:</label>
+        <UrlImageInput 
+          initialValue={currentImageUrl}
+          onSubmit={handleUrlSubmit}
+          disabled={isUploading}
+        />
+      </div>
+
+      {/* Remove button */}
+      {currentImageUrl && (
+        <button
+          onClick={handleRemoveImage}
+          disabled={isUploading}
+          className="w-full px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
+        >
+          Rimuovi Immagine
+        </button>
+      )}
+    </div>
+  );
+};
+
+// Componente helper per input URL immagine
+const UrlImageInput = ({ initialValue, onSubmit, disabled }) => {
+  const [url, setUrl] = useState(initialValue || '');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(url);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex space-x-2">
+      <input
+        type="url"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder="https://esempio.com/immagine.jpg"
+        disabled={disabled}
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+      />
+      <button
+        type="submit"
+        disabled={disabled}
+        className="flex items-center space-x-1 px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors disabled:opacity-50"
+      >
+        <SafeIcon icon={FiCheck} className="h-3 w-3" />
+        <span>Applica</span>
+      </button>
+    </form>
   );
 };
 
