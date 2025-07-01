@@ -5,6 +5,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import CMSToolbar from './components/cms/CMSToolbar';
+import SectionStyler from './components/cms/SectionStyler';
 import Home from './pages/Home';
 import Vendite from './pages/Vendite';
 import Affitti from './pages/Affitti';
@@ -19,6 +20,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         <CMSToolbar />
+        <SectionStyler />
         <Navbar />
         <motion.main
           initial={{ opacity: 0 }}

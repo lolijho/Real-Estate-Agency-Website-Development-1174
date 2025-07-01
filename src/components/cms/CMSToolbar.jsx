@@ -14,7 +14,10 @@ const {
   FiUpload,
   FiGithub,
   FiX,
-  FiCheck
+  FiCheck,
+  FiPalette,
+  FiCode,
+  FiRefreshCw
 } = FiIcons;
 
 const CMSToolbar = () => {
@@ -25,10 +28,16 @@ const CMSToolbar = () => {
     exportContent, 
     importContent,
     commitToGitHub,
-    siteSettings
+    siteSettings,
+    getSectionColors,
+    updateSectionColors,
+    getSectionCustomCSS,
+    updateSectionCustomCSS
   } = useCMS();
   
   const [showSettings, setShowSettings] = useState(false);
+  const [showSectionCustomizer, setShowSectionCustomizer] = useState(false);
+  const [selectedSection, setSelectedSection] = useState('hero');
   const [isSaving, setIsSaving] = useState(false);
 
   if (!isAdmin) return null;
@@ -98,8 +107,8 @@ const CMSToolbar = () => {
         className="fixed top-0 left-0 right-0 z-[9999] bg-white shadow-lg border-b border-gray-200"
         style={{ height: '72px' }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-full">
+          <div className="flex items-center justify-between h-full">
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium text-gray-700">CMS Admin</span>
               <div className={`w-2 h-2 rounded-full ${isEditMode ? 'bg-green-500' : 'bg-gray-400'}`} />
@@ -117,6 +126,16 @@ const CMSToolbar = () => {
               >
                 <SafeIcon icon={isEditMode ? FiEye : FiEdit3} className="h-4 w-4" />
                 <span>{isEditMode ? 'Anteprima' : 'Modifica'}</span>
+              </button>
+
+              {/* Section Customizer */}
+              <button
+                onClick={() => setShowSectionCustomizer(true)}
+                className="flex items-center space-x-2 px-3 py-1 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors"
+                title="Personalizza Sezioni"
+              >
+                <SafeIcon icon={FiPalette} className="h-4 w-4" />
+                <span>Colori & CSS</span>
               </button>
 
               {/* Export */}
@@ -186,6 +205,14 @@ const CMSToolbar = () => {
       <CMSSettings 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)} 
+      />
+
+      {/* Section Customizer Modal */}
+      <SectionCustomizer
+        isOpen={showSectionCustomizer}
+        onClose={() => setShowSectionCustomizer(false)}
+        selectedSection={selectedSection}
+        setSelectedSection={setSelectedSection}
       />
 
       {/* Spacer when toolbar is visible */}
@@ -349,6 +376,235 @@ const CMSSettings = ({ isOpen, onClose }) => {
                 >
                   Salva Impostazioni
                 </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Componente Section Customizer Modal
+const SectionCustomizer = ({ isOpen, onClose, selectedSection, setSelectedSection }) => {
+  const { 
+    getSectionColors, 
+    updateSectionColors, 
+    getSectionCustomCSS, 
+    updateSectionCustomCSS 
+  } = useCMS();
+
+  const [currentColors, setCurrentColors] = useState({});
+  const [currentCSS, setCurrentCSS] = useState('');
+
+  // Sezioni disponibili
+  const sections = [
+    { id: 'hero', name: 'Hero', description: 'Sezione principale in cima' },
+    { id: 'properties', name: 'Immobili', description: 'Sezione immobili in evidenza' },
+    { id: 'services', name: 'Servizi', description: 'Sezione servizi offerti' },
+    { id: 'about', name: 'Chi Siamo', description: 'Sezione informazioni azienda' },
+    { id: 'contact', name: 'Contatti', description: 'Sezione contatti e form' },
+    { id: 'footer', name: 'Footer', description: 'Piè di pagina' }
+  ];
+
+  // Colori di default per ogni sezione
+  const getDefaultColors = (sectionId) => {
+    const defaults = {
+      hero: {
+        background: '#ffffff',
+        text: '#1f2937',
+        accent: '#3b82f6',
+        overlay: '#000000',
+        boxBackground: '#ffffff',
+        buttonPrimary: '#3b82f6',
+        buttonSecondary: '#6b7280'
+      },
+      properties: {
+        background: '#f9fafb',
+        text: '#1f2937',
+        accent: '#3b82f6',
+        cardBackground: '#ffffff',
+        price: '#059669'
+      },
+      services: {
+        background: '#ffffff',
+        text: '#1f2937',
+        accent: '#3b82f6',
+        cardBackground: '#f9fafb'
+      },
+      about: {
+        background: '#f9fafb',
+        text: '#1f2937',
+        accent: '#3b82f6'
+      },
+      contact: {
+        background: '#ffffff',
+        text: '#1f2937',
+        accent: '#3b82f6',
+        formBackground: '#f9fafb'
+      },
+      footer: {
+        background: '#1f2937',
+        text: '#ffffff',
+        accent: '#3b82f6'
+      }
+    };
+    return defaults[sectionId] || {};
+  };
+
+  // Carica colori e CSS quando cambia sezione
+  React.useEffect(() => {
+    if (selectedSection) {
+      const colors = getSectionColors(selectedSection, getDefaultColors(selectedSection));
+      const css = getSectionCustomCSS(selectedSection);
+      setCurrentColors(colors);
+      setCurrentCSS(css);
+    }
+  }, [selectedSection, getSectionColors, getSectionCustomCSS]);
+
+  const handleColorChange = (colorKey, value) => {
+    const newColors = { ...currentColors, [colorKey]: value };
+    setCurrentColors(newColors);
+    updateSectionColors(selectedSection, newColors);
+  };
+
+  const handleCSSChange = (value) => {
+    setCurrentCSS(value);
+    updateSectionCustomCSS(selectedSection, value);
+  };
+
+  const handleResetColors = () => {
+    const defaultColors = getDefaultColors(selectedSection);
+    setCurrentColors(defaultColors);
+    updateSectionColors(selectedSection, defaultColors);
+  };
+
+  const handleResetCSS = () => {
+    setCurrentCSS('');
+    updateSectionCustomCSS(selectedSection, '');
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex h-full">
+              {/* Sidebar - Lista Sezioni */}
+              <div className="w-1/3 bg-gray-50 border-r border-gray-200 overflow-y-auto">
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900">Sezioni</h3>
+                  <p className="text-sm text-gray-600">Seleziona una sezione da personalizzare</p>
+                </div>
+                <div className="p-2">
+                  {sections.map((section) => (
+                    <button
+                      key={section.id}
+                      onClick={() => setSelectedSection(section.id)}
+                      className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
+                        selectedSection === section.id
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="font-medium">{section.name}</div>
+                      <div className={`text-sm ${
+                        selectedSection === section.id ? 'text-primary-100' : 'text-gray-500'
+                      }`}>
+                        {section.description}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Content - Personalizzazione */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Personalizza: {sections.find(s => s.id === selectedSection)?.name}
+                    </h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                      <SafeIcon icon={FiX} className="h-6 w-6" />
+                    </button>
+                  </div>
+
+                  {/* Color Palette */}
+                  <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Colori</h3>
+                      <button
+                        onClick={handleResetColors}
+                        className="flex items-center space-x-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 transition-colors"
+                      >
+                        <SafeIcon icon={FiRefreshCw} className="h-3 w-3" />
+                        <span>Reset</span>
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {Object.entries(currentColors).map(([key, value]) => (
+                        <div key={key} className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 capitalize">
+                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                          </label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="color"
+                              value={value}
+                              onChange={(e) => handleColorChange(key, e.target.value)}
+                              className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                            />
+                            <input
+                              type="text"
+                              value={value}
+                              onChange={(e) => handleColorChange(key, e.target.value)}
+                              className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CSS Custom */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">CSS Personalizzato</h3>
+                      <button
+                        onClick={handleResetCSS}
+                        className="flex items-center space-x-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 transition-colors"
+                      >
+                        <SafeIcon icon={FiRefreshCw} className="h-3 w-3" />
+                        <span>Reset</span>
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      <textarea
+                        value={currentCSS}
+                        onChange={(e) => handleCSSChange(e.target.value)}
+                        placeholder={`/* CSS per la sezione ${selectedSection} */\n.${selectedSection}-section {\n  /* Le tue regole CSS qui */\n}`}
+                        className="w-full h-48 px-3 py-2 border border-gray-300 rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                      <p className="text-xs text-gray-500">
+                        Il CSS inserito verrà applicato solo a questa sezione. Usa <code>!important</code> per sovrascrivere stili esistenti.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

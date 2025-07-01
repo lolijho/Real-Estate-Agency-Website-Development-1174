@@ -62,7 +62,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* HERO: sezione alta, responsive, box centrato */}
-      <section className="relative w-full flex items-center justify-center bg-gray-100" style={{ height: '480px', minHeight: '320px', maxHeight: '600px', overflow: 'hidden' }}>
+      <section className="hero-section relative w-full flex items-center justify-center bg-gray-100" style={{ height: '480px', minHeight: '320px', maxHeight: '600px', overflow: 'hidden' }}>
         <EditableImage
           sectionId="hero"
           field="backgroundImage"
@@ -71,16 +71,16 @@ const Home = () => {
           alt="Hero Background"
           placeholder="Carica immagine di sfondo"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
+        <div className="hero-overlay absolute inset-0 bg-black bg-opacity-40 z-10" />
         {/* BOX CENTRATO HERO */}
         <div className="relative z-20 w-full flex justify-center items-center h-full px-2">
-          <div className="bg-white bg-opacity-80 rounded-xl shadow-lg p-6 md:p-10 max-w-2xl w-full text-center flex flex-col items-center">
+          <div className="hero-box bg-white bg-opacity-80 rounded-xl shadow-lg p-6 md:p-10 max-w-2xl w-full text-center flex flex-col items-center">
             <EditableText
               sectionId="hero"
               field="title"
               defaultValue="Trova la Casa dei Tuoi Sogni"
               tag="h1"
-              className="text-3xl md:text-5xl font-bold mb-4 text-gray-900"
+              className="hero-title text-3xl md:text-5xl font-bold mb-4 text-gray-900"
               placeholder="Inserisci il titolo principale"
             />
             <EditableText
@@ -88,20 +88,20 @@ const Home = () => {
               field="subtitle"
               defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
               tag="p"
-              className="text-base md:text-xl mb-6 text-gray-700"
+              className="hero-subtitle text-base md:text-xl mb-6 text-gray-700"
               placeholder="Inserisci il sottotitolo"
             />
             <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
               <Link
                 to="/vendite"
-                className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+                className="hero-btn-primary bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
               >
                 <SafeIcon icon={FiSearch} className="h-5 w-5" />
                 <span>Esplora Vendite</span>
               </Link>
               <Link
                 to="/affitti"
-                className="border-2 border-primary-600 text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+                className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
               >
                 <SafeIcon icon={FiSearch} className="h-5 w-5" />
                 <span>Scopri Affitti</span>
@@ -129,7 +129,7 @@ const Home = () => {
       <div className="w-full h-0.5 bg-gray-200" />
 
       {/* IMMOBILI IN EVIDENZA: sezione separata, nessun overlap */}
-      <section className="py-12 bg-white">
+      <section className="properties-section py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -142,7 +142,7 @@ const Home = () => {
               field="title"
               defaultValue="Immobili in Evidenza"
               tag="h2"
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
+              className="section-title text-3xl md:text-4xl font-bold text-gray-900 mb-2"
               placeholder="Titolo sezione immobili"
             />
             <EditableText
@@ -213,7 +213,7 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-12 bg-white">
+      <section className="services-section py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

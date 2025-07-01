@@ -79,6 +79,26 @@ export const CMSProvider = ({ children }) => {
     saveContentLocally(newContent);
   };
 
+  // --- NUOVO: Aggiorna colori di una sezione ---
+  const updateSectionColors = (sectionId, colors) => {
+    updateContent(sectionId, 'colors', colors);
+  };
+
+  // --- NUOVO: Ottieni colori di una sezione ---
+  const getSectionColors = (sectionId, defaultColors = {}) => {
+    return editingContent[sectionId]?.colors ?? defaultColors;
+  };
+
+  // --- NUOVO: Aggiorna CSS custom di una sezione ---
+  const updateSectionCustomCSS = (sectionId, css) => {
+    updateContent(sectionId, 'customCSS', css);
+  };
+
+  // --- NUOVO: Ottieni CSS custom di una sezione ---
+  const getSectionCustomCSS = (sectionId) => {
+    return editingContent[sectionId]?.customCSS ?? '';
+  };
+
   // Ottieni contenuto con fallback ai valori default
   const getContent = (sectionId, field, defaultValue = '') => {
     return editingContent[sectionId]?.[field] ?? defaultValue;
@@ -146,6 +166,11 @@ export const CMSProvider = ({ children }) => {
     // Gestione contenuti
     updateContent,
     getContent,
+    // Nuovi metodi per colori e CSS custom
+    updateSectionColors,
+    getSectionColors,
+    updateSectionCustomCSS,
+    getSectionCustomCSS,
     
     // Gestione impostazioni
     updateSiteSettings,
