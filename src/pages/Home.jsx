@@ -61,90 +61,58 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative text-white flex items-center" style={{ height: '300px' }}>
-        <div className="relative w-full">
-          {/* Background Image Editable */}
-          <div className="absolute inset-0">
-            <EditableImage
-              sectionId="hero"
-              field="backgroundImage"
-              defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
-              className="w-full h-full object-cover"
-              alt="Hero Background"
-              placeholder="Carica immagine di sfondo"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          </div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center"
+      {/* HERO: sezione compatta, separata */}
+      <section className="relative w-full flex items-center justify-center bg-gray-100" style={{ height: '300px', minHeight: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+        <EditableImage
+          sectionId="hero"
+          field="backgroundImage"
+          defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          alt="Hero Background"
+          placeholder="Carica immagine di sfondo"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
+        <div className="relative z-20 w-full max-w-4xl mx-auto text-center px-4">
+          <EditableText
+            sectionId="hero"
+            field="title"
+            defaultValue="Trova la Casa dei Tuoi Sogni"
+            tag="h1"
+            className="text-4xl md:text-5xl font-bold mb-4 text-white"
+            placeholder="Inserisci il titolo principale"
+          />
+          <EditableText
+            sectionId="hero"
+            field="subtitle"
+            defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
+            tag="p"
+            className="text-lg md:text-xl mb-6 text-gray-200"
+            placeholder="Inserisci il sottotitolo"
+          />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/vendite"
+              className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
             >
-              <EditableText
-                sectionId="hero"
-                field="title"
-                defaultValue="Trova la Casa dei Tuoi Sogni"
-                tag="h1"
-                className="text-5xl md:text-6xl font-bold mb-6"
-                placeholder="Inserisci il titolo principale"
-              />
-              <EditableText
-                sectionId="hero"
-                field="subtitle"
-                defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
-                tag="p"
-                className="text-xl md:text-2xl mb-8 text-gray-200"
-                placeholder="Inserisci il sottotitolo"
-              />
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/vendite"
-                  className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <SafeIcon icon={FiSearch} className="h-5 w-5" />
-                  <span>Esplora Vendite</span>
-                </Link>
-                <Link
-                  to="/affitti"
-                  className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-700 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <SafeIcon icon={FiSearch} className="h-5 w-5" />
-                  <span>Scopri Affitti</span>
-                </Link>
-              </div>
-            </motion.div>
+              <SafeIcon icon={FiSearch} className="h-5 w-5" />
+              <span>Esplora Vendite</span>
+            </Link>
+            <Link
+              to="/affitti"
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-700 transition-colors flex items-center justify-center space-x-2"
+            >
+              <SafeIcon icon={FiSearch} className="h-5 w-5" />
+              <span>Scopri Affitti</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 bg-white border-t-4 border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <SafeIcon icon={stat.icon} className="h-8 w-8 text-primary-600" />
-                </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</h3>
-                <p className="text-gray-600">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* SEPARATORE NETTO */}
+      <div className="w-full h-0.5 bg-gray-200" />
 
-      {/* Featured Properties */}
-      <section className="py-12 bg-gray-50">
+      {/* IMMOBILI IN EVIDENZA: sezione separata, nessun overlap */}
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -157,7 +125,7 @@ const Home = () => {
               field="title"
               defaultValue="Immobili in Evidenza"
               tag="h2"
-              className="text-4xl font-bold text-gray-900 mb-4"
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
               placeholder="Titolo sezione immobili"
             />
             <EditableText
@@ -165,7 +133,7 @@ const Home = () => {
               field="subtitle"
               defaultValue="Scopri le nostre migliori proposte selezionate per te"
               tag="p"
-              className="text-xl text-gray-600"
+              className="text-lg text-gray-600"
               placeholder="Sottotitolo sezione immobili"
             />
           </motion.div>
@@ -201,21 +169,29 @@ const Home = () => {
               </div>
             </>
           )}
+        </div>
+      </section>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center mt-12"
-          >
-            <Link
-              to="/vendite"
-              className="inline-flex items-center space-x-2 bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-            >
-              <span>Vedi Tutti gli Immobili</span>
-              <SafeIcon icon={FiArrowRight} className="h-5 w-5" />
-            </Link>
-          </motion.div>
+      {/* Stats Section */}
+      <section className="py-12 bg-white border-t-4 border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center"
+              >
+                <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <SafeIcon icon={stat.icon} className="h-8 w-8 text-primary-600" />
+                </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</h3>
+                <p className="text-gray-600">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
