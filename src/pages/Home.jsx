@@ -61,8 +61,8 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* HERO: sezione compatta, separata */}
-      <section className="relative w-full flex items-center justify-center bg-gray-100" style={{ height: '300px', minHeight: '300px', maxHeight: '300px', overflow: 'hidden' }}>
+      {/* HERO: sezione alta, responsive, box centrato */}
+      <section className="relative w-full flex items-center justify-center bg-gray-100" style={{ height: '480px', minHeight: '320px', maxHeight: '600px', overflow: 'hidden' }}>
         <EditableImage
           sectionId="hero"
           field="backgroundImage"
@@ -72,41 +72,58 @@ const Home = () => {
           placeholder="Carica immagine di sfondo"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 z-10" />
-        <div className="relative z-20 w-full max-w-4xl mx-auto text-center px-4">
-          <EditableText
-            sectionId="hero"
-            field="title"
-            defaultValue="Trova la Casa dei Tuoi Sogni"
-            tag="h1"
-            className="text-4xl md:text-5xl font-bold mb-4 text-white"
-            placeholder="Inserisci il titolo principale"
-          />
-          <EditableText
-            sectionId="hero"
-            field="subtitle"
-            defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
-            tag="p"
-            className="text-lg md:text-xl mb-6 text-gray-200"
-            placeholder="Inserisci il sottotitolo"
-          />
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/vendite"
-              className="bg-white text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
-            >
-              <SafeIcon icon={FiSearch} className="h-5 w-5" />
-              <span>Esplora Vendite</span>
-            </Link>
-            <Link
-              to="/affitti"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-700 transition-colors flex items-center justify-center space-x-2"
-            >
-              <SafeIcon icon={FiSearch} className="h-5 w-5" />
-              <span>Scopri Affitti</span>
-            </Link>
+        {/* BOX CENTRATO HERO */}
+        <div className="relative z-20 w-full flex justify-center items-center h-full px-2">
+          <div className="bg-white bg-opacity-80 rounded-xl shadow-lg p-6 md:p-10 max-w-2xl w-full text-center flex flex-col items-center">
+            <EditableText
+              sectionId="hero"
+              field="title"
+              defaultValue="Trova la Casa dei Tuoi Sogni"
+              tag="h1"
+              className="text-3xl md:text-5xl font-bold mb-4 text-gray-900"
+              placeholder="Inserisci il titolo principale"
+            />
+            <EditableText
+              sectionId="hero"
+              field="subtitle"
+              defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
+              tag="p"
+              className="text-base md:text-xl mb-6 text-gray-700"
+              placeholder="Inserisci il sottotitolo"
+            />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+              <Link
+                to="/vendite"
+                className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+              >
+                <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                <span>Esplora Vendite</span>
+              </Link>
+              <Link
+                to="/affitti"
+                className="border-2 border-primary-600 text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+              >
+                <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                <span>Scopri Affitti</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* BOX SOTTO HERO (CTA/INFO) */}
+      <div className="w-full flex justify-center bg-white py-6 shadow-sm">
+        <div className="bg-primary-50 rounded-xl shadow p-6 max-w-2xl w-full text-center">
+          <EditableText
+            sectionId="hero"
+            field="cta"
+            defaultValue="Scopri subito le nostre offerte più esclusive o contattaci per una consulenza gratuita!"
+            tag="p"
+            className="text-lg md:text-xl text-primary-700 font-semibold"
+            placeholder="Testo CTA sotto hero"
+          />
+        </div>
+      </div>
 
       {/* SEPARATORE NETTO */}
       <div className="w-full h-0.5 bg-gray-200" />
