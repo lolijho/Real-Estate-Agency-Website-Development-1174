@@ -62,7 +62,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative text-white flex items-center" style={{ height: '400px' }}>
+      <section className="relative text-white flex items-center" style={{ height: '300px' }}>
         <div className="relative w-full">
           {/* Background Image Editable */}
           <div className="absolute inset-0">
@@ -76,7 +76,7 @@ const Home = () => {
             />
             <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           </div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white border-t-4 border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
@@ -144,7 +144,7 @@ const Home = () => {
       </section>
 
       {/* Featured Properties */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -220,7 +220,7 @@ const Home = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-16 bg-white">
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
