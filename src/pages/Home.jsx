@@ -62,25 +62,25 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* HERO: sezione alta, responsive, box centrato */}
-      <section className="hero-section relative w-full flex items-center justify-center bg-gray-100" style={{ height: '480px', minHeight: '320px', maxHeight: '600px', overflow: 'hidden' }}>
+      <section className="hero-section relative w-full flex items-center justify-center bg-gray-100 min-h-[400px] md:min-h-[480px] max-h-[500px] md:max-h-[600px] overflow-hidden">
         <EditableImage
           sectionId="hero"
           field="backgroundImage"
           defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0"
           alt="Hero Background"
           placeholder="Carica immagine di sfondo"
         />
         <div className="hero-overlay absolute inset-0 bg-black bg-opacity-40 z-10" />
         {/* BOX CENTRATO HERO */}
-        <div className="relative z-20 w-full flex justify-center items-center h-full px-2">
-          <div className="hero-box bg-white bg-opacity-80 rounded-xl shadow-lg p-6 md:p-10 max-w-2xl w-full text-center flex flex-col items-center">
+        <div className="relative z-20 w-full flex justify-center items-center h-full px-3 md:px-6 py-8 md:py-12">
+          <div className="hero-box bg-white bg-opacity-90 rounded-xl shadow-xl p-4 sm:p-6 md:p-10 max-w-xs sm:max-w-lg md:max-w-2xl w-full text-center flex flex-col items-center">
             <EditableText
               sectionId="hero"
               field="title"
               defaultValue="Trova la Casa dei Tuoi Sogni"
               tag="h1"
-              className="hero-title text-3xl md:text-5xl font-bold mb-4 text-gray-900"
+              className="hero-title text-2xl sm:text-3xl md:text-5xl font-bold mb-3 md:mb-4 text-gray-900 leading-tight"
               placeholder="Inserisci il titolo principale"
             />
             <EditableText
@@ -88,22 +88,22 @@ const Home = () => {
               field="subtitle"
               defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
               tag="p"
-              className="hero-subtitle text-base md:text-xl mb-6 text-gray-700"
+              className="hero-subtitle text-sm sm:text-base md:text-xl mb-4 md:mb-6 text-gray-700 leading-relaxed"
               placeholder="Inserisci il sottotitolo"
             />
-            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center w-full">
               <Link
                 to="/vendite"
-                className="hero-btn-primary bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+                className="hero-btn-primary bg-primary-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full md:w-auto text-sm md:text-base"
               >
-                <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                <SafeIcon icon={FiSearch} className="h-4 md:h-5 w-4 md:w-5" />
                 <span>Esplora Vendite</span>
               </Link>
               <Link
                 to="/affitti"
-                className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
+                className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full md:w-auto text-sm md:text-base"
               >
-                <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                <SafeIcon icon={FiSearch} className="h-4 md:h-5 w-4 md:w-5" />
                 <span>Scopri Affitti</span>
               </Link>
             </div>
@@ -112,14 +112,14 @@ const Home = () => {
       </section>
 
       {/* BOX SOTTO HERO (CTA/INFO) */}
-      <div className="w-full flex justify-center bg-white py-6 shadow-sm">
-        <div className="bg-primary-50 rounded-xl shadow p-6 max-w-2xl w-full text-center">
+      <div className="w-full flex justify-center bg-white py-4 md:py-6 shadow-sm">
+        <div className="bg-primary-50 rounded-xl shadow p-4 md:p-6 max-w-xs sm:max-w-lg md:max-w-2xl w-full text-center mx-3 md:mx-0">
           <EditableText
             sectionId="hero"
             field="cta"
             defaultValue="Scopri subito le nostre offerte più esclusive o contattaci per una consulenza gratuita!"
             tag="p"
-            className="text-lg md:text-xl text-primary-700 font-semibold"
+            className="text-sm sm:text-lg md:text-xl text-primary-700 font-semibold leading-relaxed"
             placeholder="Testo CTA sotto hero"
           />
         </div>
