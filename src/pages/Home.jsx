@@ -61,58 +61,113 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* HERO: sezione alta, responsive, box centrato */}
-      <section className="hero-section relative w-full flex items-center justify-center bg-gray-100 min-h-[400px] md:min-h-[480px] max-h-[500px] md:max-h-[600px] overflow-hidden">
-        <EditableImage
-          sectionId="hero"
-          field="backgroundImage"
-          defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0"
-          alt="Hero Background"
-          placeholder="Carica immagine di sfondo"
-        />
-        <div className="hero-overlay absolute inset-0 bg-black bg-opacity-40 z-10" />
-        {/* BOX CENTRATO HERO */}
-        <div className="relative z-20 w-full flex justify-center items-center h-full px-3 md:px-6 py-8 md:py-12">
-          <div className="hero-box bg-white bg-opacity-90 rounded-xl shadow-xl p-4 sm:p-6 md:p-10 max-w-xs sm:max-w-lg md:max-w-2xl w-full text-center flex flex-col items-center">
-            <EditableText
+      {/* HERO: Layout diverso per mobile vs desktop */}
+      <section className="hero-section relative w-full">
+        {/* LAYOUT MOBILE: Immagine sopra, box sotto (stacked) */}
+        <div className="md:hidden">
+          {/* Immagine sopra su mobile */}
+          <div className="w-full h-64 relative">
+            <EditableImage
               sectionId="hero"
-              field="title"
-              defaultValue="Trova la Casa dei Tuoi Sogni"
-              tag="h1"
-              className="hero-title text-2xl sm:text-3xl md:text-5xl font-bold mb-3 md:mb-4 text-gray-900 leading-tight"
-              placeholder="Inserisci il titolo principale"
+              field="backgroundImage"
+              defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+              className="w-full h-full object-cover"
+              alt="Hero Background"
+              placeholder="Carica immagine di sfondo"
             />
-            <EditableText
-              sectionId="hero"
-              field="subtitle"
-              defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
-              tag="p"
-              className="hero-subtitle text-sm sm:text-base md:text-xl mb-4 md:mb-6 text-gray-700 leading-relaxed"
-              placeholder="Inserisci il sottotitolo"
-            />
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center w-full">
-              <Link
-                to="/vendite"
-                className="hero-btn-primary bg-primary-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 w-full md:w-auto text-sm md:text-base"
-              >
-                <SafeIcon icon={FiSearch} className="h-4 md:h-5 w-4 md:w-5" />
-                <span>Esplora Vendite</span>
-              </Link>
-              <Link
-                to="/affitti"
-                className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2 w-full md:w-auto text-sm md:text-base"
-              >
-                <SafeIcon icon={FiSearch} className="h-4 md:h-5 w-4 md:w-5" />
-                <span>Scopri Affitti</span>
-              </Link>
+          </div>
+          
+          {/* Box sotto su mobile */}
+          <div className="bg-white p-6">
+            <div className="hero-box bg-gray-50 rounded-xl shadow-lg p-6 text-center">
+              <EditableText
+                sectionId="hero"
+                field="title"
+                defaultValue="Trova la Casa dei Tuoi Sogni"
+                tag="h1"
+                className="hero-title text-2xl font-bold mb-3 text-gray-900 leading-tight"
+                placeholder="Inserisci il titolo principale"
+              />
+              <EditableText
+                sectionId="hero"
+                field="subtitle"
+                defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
+                tag="p"
+                className="hero-subtitle text-base mb-4 text-gray-700 leading-relaxed"
+                placeholder="Inserisci il sottotitolo"
+              />
+              <div className="flex flex-col gap-3 w-full">
+                <Link
+                  to="/vendite"
+                  className="hero-btn-primary bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <SafeIcon icon={FiSearch} className="h-4 w-4" />
+                  <span>Esplora Vendite</span>
+                </Link>
+                <Link
+                  to="/affitti"
+                  className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-6 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2"
+                >
+                  <SafeIcon icon={FiSearch} className="h-4 w-4" />
+                  <span>Scopri Affitti</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LAYOUT DESKTOP: Immagine di sfondo con overlay (come prima) */}
+        <div className="hidden md:flex items-center justify-center bg-gray-100 min-h-[480px] max-h-[600px] overflow-hidden">
+          <EditableImage
+            sectionId="hero"
+            field="backgroundImage"
+            defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+            alt="Hero Background"
+            placeholder="Carica immagine di sfondo"
+          />
+          <div className="hero-overlay absolute inset-0 bg-black bg-opacity-40 z-10" />
+          <div className="relative z-20 w-full flex justify-center items-center h-full px-6 py-12">
+            <div className="hero-box bg-white bg-opacity-90 rounded-xl shadow-xl p-10 max-w-2xl w-full text-center">
+              <EditableText
+                sectionId="hero"
+                field="title"
+                defaultValue="Trova la Casa dei Tuoi Sogni"
+                tag="h1"
+                className="hero-title text-5xl font-bold mb-4 text-gray-900 leading-tight"
+                placeholder="Inserisci il titolo principale"
+              />
+              <EditableText
+                sectionId="hero"
+                field="subtitle"
+                defaultValue="Con Affitti Urbi, il tuo nuovo inizio è a portata di mano"
+                tag="p"
+                className="hero-subtitle text-xl mb-6 text-gray-700 leading-relaxed"
+                placeholder="Inserisci il sottotitolo"
+              />
+              <div className="flex flex-row gap-4 justify-center w-full">
+                <Link
+                  to="/vendite"
+                  className="hero-btn-primary bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                  <span>Esplora Vendite</span>
+                </Link>
+                <Link
+                  to="/affitti"
+                  className="hero-btn-secondary border-2 border-primary-600 text-primary-700 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors flex items-center justify-center space-x-2"
+                >
+                  <SafeIcon icon={FiSearch} className="h-5 w-5" />
+                  <span>Scopri Affitti</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* BOX SOTTO HERO (CTA/INFO) */}
-      <div className="w-full flex justify-center bg-white py-4 md:py-6 shadow-sm">
+      {/* BOX SOTTO HERO (CTA/INFO) - Solo su desktop */}
+      <div className="hidden md:block w-full flex justify-center bg-white py-6 shadow-sm">
         <div className="bg-primary-50 rounded-xl shadow p-4 md:p-6 max-w-xs sm:max-w-lg md:max-w-2xl w-full text-center mx-3 md:mx-0">
           <EditableText
             sectionId="hero"
