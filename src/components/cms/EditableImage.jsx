@@ -98,7 +98,7 @@ const EditableImage = ({
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
                   <div className="text-center text-white">
                     <SafeIcon icon={FiLoader} className="h-8 w-8 animate-spin mx-auto mb-2" />
-                    <p>Caricamento...</p>
+                    <p>Caricamento su Vercel Blob...</p>
                   </div>
                 </div>
               )}

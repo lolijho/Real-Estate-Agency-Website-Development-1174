@@ -640,29 +640,26 @@ const BackgroundImageEditor = ({ sectionId }) => {
     if (!file) return;
 
     try {
-      // Valida il file
-      if (!file.type.startsWith('image/')) {
-        throw new Error('Seleziona un file immagine valido');
-      }
+      // Importa le utility di upload
+      const { uploadImage, validateImageFile, createImagePreview } = await import('../../api/upload');
       
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Il file deve essere inferiore a 5MB');
-      }
+      // Valida il file
+      validateImageFile(file);
       
       setIsUploading(true);
       
       // Crea anteprima immediata
-      const preview = URL.createObjectURL(file);
+      const preview = await createImagePreview(file);
       setPreviewUrl(preview);
       
-      // Per ora usiamo l'anteprima come URL finale
-      // In produzione qui andresti a caricare su un servizio di storage
-      updateContent(sectionId, 'backgroundImage', preview);
+      // Upload su Vercel Blob
+      const uploadedUrl = await uploadImage(file);
       
-      setTimeout(() => {
-        setPreviewUrl(null);
-        setIsUploading(false);
-      }, 1000);
+      // Salva l'URL permanente
+      updateContent(sectionId, 'backgroundImage', uploadedUrl);
+      
+      setPreviewUrl(null);
+      setIsUploading(false);
       
     } catch (error) {
       console.error('Errore upload immagine:', error);
@@ -699,7 +696,7 @@ const BackgroundImageEditor = ({ sectionId }) => {
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
               <div className="text-center text-white">
                 <SafeIcon icon={FiUpload} className="h-6 w-6 animate-pulse mx-auto mb-1" />
-                <p className="text-sm">Caricamento...</p>
+                <p className="text-sm">Caricamento su Vercel Blob...</p>
               </div>
             </div>
           )}
@@ -724,7 +721,7 @@ const BackgroundImageEditor = ({ sectionId }) => {
           <SafeIcon icon={FiUpload} className="h-4 w-4" />
           <span>Carica Nuova Immagine</span>
         </button>
-        <p className="text-xs text-gray-500 mt-2">JPG, PNG, WebP - Max 5MB</p>
+        <p className="text-xs text-gray-500 mt-2">JPG, PNG, WebP - Max 10MB (salvato su Vercel Blob)</p>
       </div>
 
       {/* URL Input */}

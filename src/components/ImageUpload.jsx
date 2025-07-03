@@ -151,7 +151,7 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
               Trascina qui le immagini o clicca per selezionare
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              JPG, PNG, WebP - Max 10MB ciascuna ({images.length}/{maxImages})
+              JPG, PNG, WebP - Max 10MB ciascuna • Salvate su Vercel Blob ({images.length}/{maxImages})
             </p>
           </div>
         </div>
@@ -181,7 +181,7 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
                     <div className="text-center text-white">
                       <SafeIcon icon={FiLoader} className="h-6 w-6 animate-spin mx-auto mb-2" />
                       <p className="text-sm">
-                        {uploadProgress[image.id] || 0}%
+                        Vercel Blob: {uploadProgress[image.id] || 0}%
                       </p>
                     </div>
                   </div>
