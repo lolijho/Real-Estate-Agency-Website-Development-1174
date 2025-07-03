@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { uploadImage, validateImageFile } from '../api/upload';
-import { SafeIcon } from '../common/SafeIcon';
+import SafeIcon from '../common/SafeIcon';
 
 const MediaLibrary = () => {
   const [images, setImages] = useState([]);
@@ -134,10 +134,10 @@ const MediaLibrary = () => {
               htmlFor="file-upload"
               className={`cursor-pointer ${isUploading ? 'opacity-50' : ''}`}
             >
-              <SafeIcon 
-                name="upload" 
-                className="mx-auto h-12 w-12 text-gray-400 mb-4"
-              />
+                             <SafeIcon 
+                 name="Upload" 
+                 className="mx-auto h-12 w-12 text-gray-400 mb-4"
+               />
               
               {isUploading ? (
                 <div>
@@ -168,7 +168,7 @@ const MediaLibrary = () => {
           {/* Search */}
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
-              <SafeIcon name="search" className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <SafeIcon name="Search" className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Cerca immagini..."
@@ -184,7 +184,7 @@ const MediaLibrary = () => {
         <div className="bg-white rounded-lg shadow-sm p-6">
           {filteredImages.length === 0 ? (
             <div className="text-center py-12">
-              <SafeIcon name="image" className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                             <SafeIcon name="Image" className="mx-auto h-16 w-16 text-gray-400 mb-4" />
               <p className="text-gray-500">
                 {searchTerm ? 'Nessuna immagine trovata' : 'Nessuna immagine caricata'}
               </p>
@@ -227,7 +227,7 @@ const MediaLibrary = () => {
                         onClick={() => deleteImage(image.id)}
                         className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors"
                       >
-                        <SafeIcon name="trash" className="h-4 w-4" />
+                                                 <SafeIcon name="Trash" className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -251,7 +251,7 @@ const MediaLibrary = () => {
                   onClick={() => setSelectedImage(null)}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <SafeIcon name="x" className="h-6 w-6" />
+                                     <SafeIcon name="X" className="h-6 w-6" />
                 </button>
               </div>
               
