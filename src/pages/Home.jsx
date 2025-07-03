@@ -70,7 +70,7 @@ const Home = () => {
             <EditableImage
               sectionId="hero"
               field="backgroundImage"
-              defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+              defaultValue="https://images.unsplash.com/photo-1520637836862-4d197d17c80a?w=1200&q=80"
               className="w-full h-full object-cover"
               alt="Hero Background"
               placeholder="Carica immagine di sfondo"
@@ -117,11 +117,11 @@ const Home = () => {
         </div>
 
         {/* LAYOUT DESKTOP: Immagine di sfondo con overlay (come prima) */}
-        <div className="hidden md:flex items-center justify-center bg-gray-100 min-h-[480px] max-h-[600px] overflow-hidden">
+        <div className="hidden md:flex items-center justify-center bg-gray-100 min-h-[480px] max-h-[600px] overflow-hidden relative">
           <EditableImage
             sectionId="hero"
             field="backgroundImage"
-            defaultValue="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+            defaultValue="https://images.unsplash.com/photo-1520637836862-4d197d17c80a?w=1200&q=80"
             className="absolute inset-0 w-full h-full object-cover object-center z-0"
             alt="Hero Background"
             placeholder="Carica immagine di sfondo"
@@ -166,17 +166,19 @@ const Home = () => {
         </div>
       </section>
 
-      {/* BOX SOTTO HERO (CTA/INFO) - Solo su desktop */}
-      <div className="hidden md:block w-full flex justify-center bg-white py-6 shadow-sm">
-        <div className="bg-primary-50 rounded-xl shadow p-4 md:p-6 max-w-xs sm:max-w-lg md:max-w-2xl w-full text-center mx-3 md:mx-0">
-          <EditableText
-            sectionId="hero"
-            field="cta"
-            defaultValue="Scopri subito le nostre offerte più esclusive o contattaci per una consulenza gratuita!"
-            tag="p"
-            className="text-sm sm:text-lg md:text-xl text-primary-700 font-semibold leading-relaxed"
-            placeholder="Testo CTA sotto hero"
-          />
+      {/* BOX SOTTO HERO (CTA/INFO) - Centrato sia mobile che desktop */}
+      <div className="w-full bg-white py-6 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+          <div className="bg-primary-50 rounded-xl shadow-lg p-6 max-w-4xl w-full text-center">
+            <EditableText
+              sectionId="hero"
+              field="cta"
+              defaultValue="Scopri subito le nostre offerte più esclusive o contattaci per una consulenza gratuita!"
+              tag="p"
+              className="text-lg md:text-xl text-primary-700 font-semibold leading-relaxed"
+              placeholder="Testo CTA sotto hero"
+            />
+          </div>
         </div>
       </div>
 
