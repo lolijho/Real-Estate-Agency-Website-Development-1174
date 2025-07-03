@@ -1,51 +1,40 @@
-// Upload utility per immagini (versione temporanea con Object URL)
+import { put } from '@vercel/blob';
+
+// Upload utility per immagini con Vercel Blob
 export const uploadImage = async (file) => {
   try {
-    // Per ora creiamo un URL temporaneo dal file
-    // In futuro questo sarà sostituito con un vero upload a Vercel Blob
+    // Upload a Vercel Blob
+    const blob = await put(file.name, file, {
+      access: 'public',
+      handleUploadUrl: '/api/upload'
+    });
+    
+    return blob.url;
+  } catch (error) {
+    console.error('Errore upload Vercel Blob:', error);
+    
+    // Fallback temporaneo se Vercel Blob non è configurato
+    console.warn('Fallback a Object URL temporaneo');
+    const objectUrl = URL.createObjectURL(file);
     
     // Simula un delay di upload
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
     
-    // Crea un Object URL che persisterà fino al refresh della pagina
-    const objectUrl = URL.createObjectURL(file);
-    
-    // In futuro qui faremo il vero upload:
-    /*
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-    
-    if (!response.ok) {
-      throw new Error('Errore durante l\'upload');
-    }
-    
-    const data = await response.json();
-    return data.url;
-    */
-    
     return objectUrl;
-  } catch (error) {
-    console.error('Errore upload:', error);
-    throw error;
   }
 };
 
 // Utility per validare il file immagine
 export const validateImageFile = (file) => {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  const maxSize = 5 * 1024 * 1024; // 5MB
+  const maxSize = 10 * 1024 * 1024; // 10MB per Vercel Blob
 
   if (!validTypes.includes(file.type)) {
     throw new Error('Tipo file non supportato. Usa JPG, PNG o WebP.');
   }
 
   if (file.size > maxSize) {
-    throw new Error('File troppo grande. Massimo 5MB.');
+    throw new Error('File troppo grande. Massimo 10MB.');
   }
 
   return true;

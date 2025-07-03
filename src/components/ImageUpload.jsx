@@ -151,7 +151,7 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
               Trascina qui le immagini o clicca per selezionare
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              JPG, PNG, WebP - Max 5MB ciascuna ({images.length}/{maxImages})
+              JPG, PNG, WebP - Max 10MB ciascuna ({images.length}/{maxImages})
             </p>
           </div>
         </div>
