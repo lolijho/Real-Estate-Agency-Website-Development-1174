@@ -6,7 +6,7 @@ import SafeIcon from '../../common/SafeIcon';
 import { useAuth } from '../../context/AuthContext';
 import { useCMS } from '../../context/CMSContext';
 
-const { FiHome, FiMenu, FiX, FiSettings, FiLogOut } = FiIcons;
+const { FiHome, FiMenu, FiX, FiSettings, FiLogOut, FiImage } = FiIcons;
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +44,8 @@ const Navbar = () => {
   ];
 
   const adminNavItems = [
-    { name: 'Gestione', path: '/gestione-annunci', icon: FiSettings }
+    { name: 'Gestione', path: '/gestione-annunci', icon: FiSettings },
+    { name: 'Media', path: '/media-library', icon: FiImage }
   ];
 
   const navItems = isAdmin ? [...publicNavItems, ...adminNavItems] : publicNavItems;

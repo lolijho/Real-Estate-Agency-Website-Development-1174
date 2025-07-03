@@ -14,6 +14,7 @@ import Contatti from './pages/Contatti';
 import GestioneAnnunci from './pages/GestioneAnnunci';
 import PropertyDetail from './pages/PropertyDetail';
 import AdminLogin from './pages/AdminLogin';
+import MediaLibrary from './pages/MediaLibrary';
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <GestioneAnnunci />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/media-library" 
+              element={
+                <ProtectedRoute>
+                  <MediaLibrary />
                 </ProtectedRoute>
               } 
             />
