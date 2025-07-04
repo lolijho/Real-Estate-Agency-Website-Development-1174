@@ -327,3 +327,118 @@ export const propertyService = {
 };
 
 export default client; 
+
+// Schema per la tabella settings
+export const createSettingsTable = async () => {
+  if (!client) {
+    return;
+  }
+  try {
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        key TEXT UNIQUE NOT NULL,
+        value TEXT,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('Tabella settings creata con successo');
+  } catch (error) {
+    console.error('Errore creazione tabella settings:', error);
+  }
+};
+
+// Servizio per gestire le impostazioni
+export const settingsService = {
+  // Ottieni tutte le impostazioni
+  async getAll() {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
+    try {
+      const result = await client.execute(`
+        SELECT key, value FROM settings
+      `);
+      
+      const settings = {};
+      result.rows.forEach(row => {
+        try {
+          settings[row.key] = JSON.parse(row.value);
+        } catch {
+          settings[row.key] = row.value;
+        }
+      });
+      
+      return settings;
+    } catch (error) {
+      console.error('Errore nel recupero impostazioni:', error);
+      return {};
+    }
+  },
+
+  // Ottieni singola impostazione
+  async get(key) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
+    try {
+      const result = await client.execute({
+        sql: `SELECT value FROM settings WHERE key = ?`,
+        args: [key]
+      });
+      
+      if (result.rows.length === 0) return null;
+      
+      try {
+        return JSON.parse(result.rows[0].value);
+      } catch {
+        return result.rows[0].value;
+      }
+    } catch (error) {
+      console.error('Errore nel recupero impostazione:', error);
+      return null;
+    }
+  },
+
+  // Salva o aggiorna impostazione
+  async set(key, value) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
+    try {
+      const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
+      
+      await client.execute({
+        sql: `
+          INSERT OR REPLACE INTO settings (key, value, updated_at)
+          VALUES (?, ?, CURRENT_TIMESTAMP)
+        `,
+        args: [key, valueStr]
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Errore nel salvataggio impostazione:', error);
+      throw error;
+    }
+  },
+
+  // Elimina impostazione
+  async delete(key) {
+    if (!client) {
+      throw new Error('Database non configurato');
+    }
+    try {
+      await client.execute({
+        sql: `DELETE FROM settings WHERE key = ?`,
+        args: [key]
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Errore nell\'eliminazione impostazione:', error);
+      throw error;
+    }
+  }
+};
+

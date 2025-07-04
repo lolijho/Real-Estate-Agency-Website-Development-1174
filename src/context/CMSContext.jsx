@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { settingsService, createSettingsTable } from '../lib/database';
 
 const CMSContext = createContext();
 
@@ -39,15 +40,17 @@ export const CMSProvider = ({ children }) => {
 
   // Funzione loadFromGitHub già definita sopra - rimuovo duplicato
 
-  // Carica contenuti dal localStorage e GitHub
+  // Carica contenuti dal localStorage e database
   useEffect(() => {
     const loadContent = async () => {
       try {
+        // Inizializza la tabella settings se non esiste
+        await createSettingsTable();
+        
         if (typeof window !== 'undefined') {
           const savedContent = localStorage.getItem('cms-content');
-          const savedSettings = localStorage.getItem('cms-settings');
           
-          // Carica prima dal localStorage
+          // Carica prima dal localStorage per i contenuti
           if (savedContent) {
             try {
               setEditingContent(JSON.parse(savedContent));
@@ -56,21 +59,54 @@ export const CMSProvider = ({ children }) => {
             }
           }
           
-          if (savedSettings) {
-            try {
-              const settings = JSON.parse(savedSettings);
-              setSiteSettings(settings);
-              
-              // Se GitHub è configurato, prova a caricare da GitHub
-              if (settings.github?.token && settings.github?.owner && settings.github?.repo) {
-                try {
-                  await loadFromGitHub(settings.github);
-                } catch (error) {
-                  console.warn('Caricamento da GitHub fallito, uso dati locali:', error.message);
-                }
+          // Carica le impostazioni dal database
+          try {
+            const dbSettings = await settingsService.getAll();
+            
+            // Merge con le impostazioni di default
+            const mergedSettings = {
+              company: dbSettings.company || {
+                name: 'Affitti Urbi',
+                address: 'Via Milano 123, 20121 Milano MI',
+                phone: '+39 02 1234567',
+                email: 'info@affittiurbi.it',
+                website: 'www.affittiurbi.it'
+              },
+              github: dbSettings.github || {
+                token: import.meta.env.VITE_GITHUB_TOKEN || '',
+                repo: 'Real-Estate-Agency-Website-Development-1174',
+                owner: 'lolijho',
+                autoSave: false,
+                branch: 'main'
+              },
+              social: dbSettings.social || {
+                facebook: '',
+                instagram: '',
+                linkedin: ''
               }
-            } catch (error) {
-              console.error('Errore caricamento impostazioni CMS:', error);
+            };
+            
+            setSiteSettings(mergedSettings);
+            
+            // Se GitHub è configurato, prova a caricare da GitHub
+            if (mergedSettings.github?.token && mergedSettings.github?.owner && mergedSettings.github?.repo) {
+              try {
+                await loadFromGitHub(mergedSettings.github);
+              } catch (error) {
+                console.warn('Caricamento da GitHub fallito, uso dati locali:', error.message);
+              }
+            }
+          } catch (error) {
+            console.error('Errore caricamento impostazioni dal database:', error);
+            // Fallback al localStorage se il database non è disponibile
+            const savedSettings = localStorage.getItem('cms-settings');
+            if (savedSettings) {
+              try {
+                const settings = JSON.parse(savedSettings);
+                setSiteSettings(settings);
+              } catch (error) {
+                console.error('Errore caricamento impostazioni CMS:', error);
+              }
             }
           }
         }
@@ -93,13 +129,27 @@ export const CMSProvider = ({ children }) => {
     }
   };
 
-  const saveSettingsLocally = (settings) => {
+  const saveSettingsLocally = async (settings) => {
     try {
+      // Salva nel database
+      await settingsService.set('company', settings.company);
+      await settingsService.set('github', settings.github);
+      await settingsService.set('social', settings.social);
+      
+      // Mantieni anche il localStorage come backup
       if (typeof window !== 'undefined') {
         localStorage.setItem('cms-settings', JSON.stringify(settings));
       }
     } catch (error) {
-      console.error('Errore salvataggio impostazioni CMS:', error);
+      console.error('Errore salvataggio impostazioni nel database:', error);
+      // Fallback al localStorage se il database non è disponibile
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('cms-settings', JSON.stringify(settings));
+        }
+      } catch (localError) {
+        console.error('Errore salvataggio impostazioni CMS:', localError);
+      }
     }
   };
 
@@ -157,7 +207,7 @@ export const CMSProvider = ({ children }) => {
   };
 
   // Aggiorna impostazioni sito
-  const updateSiteSettings = (category, field, value) => {
+  const updateSiteSettings = async (category, field, value) => {
     const newSettings = {
       ...siteSettings,
       [category]: {
@@ -166,7 +216,7 @@ export const CMSProvider = ({ children }) => {
       }
     };
     setSiteSettings(newSettings);
-    saveSettingsLocally(newSettings);
+    await saveSettingsLocally(newSettings);
   };
 
   // Commit su GitHub con implementazione completa
