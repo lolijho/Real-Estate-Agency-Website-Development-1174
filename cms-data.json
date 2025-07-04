@@ -1,0 +1,26 @@
+{
+  "content": {},
+  "settings": {
+    "company": {
+      "name": "Affitti Urbi",
+      "address": "Via Milano 123, 20121 Milano MI",
+      "phone": "+39 02 1234567",
+      "email": "info@affittiurbi.it",
+      "website": "www.affittiurbi.it"
+    },
+    "github": {
+      "token": "",
+      "repo": "Real-Estate-Agency-Website-Development-1174",
+      "owner": "lolijho",
+      "autoSave": false,
+      "branch": "main"
+    },
+    "social": {
+      "facebook": "",
+      "instagram": "",
+      "linkedin": ""
+    }
+  },
+  "lastUpdate": "2024-07-23T10:00:00.000Z",
+  "version": "1.0"
+}
