@@ -26,7 +26,9 @@ export const CMSProvider = ({ children }) => {
     github: {
       token: '',
       repo: 'Real-Estate-Agency-Website-Development-1174',
-      owner: 'lolijho'
+      owner: 'lolijho',
+      autoSave: false,
+      branch: 'main'
     },
     social: {
       facebook: '',
@@ -35,38 +37,71 @@ export const CMSProvider = ({ children }) => {
     }
   });
 
-  // Carica contenuti dal localStorage
+  // Carica contenuti dal localStorage e GitHub
   useEffect(() => {
-    const savedContent = localStorage.getItem('cms-content');
-    const savedSettings = localStorage.getItem('cms-settings');
-    
-    if (savedContent) {
+    const loadContent = async () => {
       try {
-        setEditingContent(JSON.parse(savedContent));
+        if (typeof window !== 'undefined') {
+          const savedContent = localStorage.getItem('cms-content');
+          const savedSettings = localStorage.getItem('cms-settings');
+          
+          // Carica prima dal localStorage
+          if (savedContent) {
+            try {
+              setEditingContent(JSON.parse(savedContent));
+            } catch (error) {
+              console.error('Errore caricamento contenuti CMS:', error);
+            }
+          }
+          
+          if (savedSettings) {
+            try {
+              const settings = JSON.parse(savedSettings);
+              setSiteSettings(settings);
+              
+              // Se GitHub è configurato, prova a caricare da GitHub
+              if (settings.github?.token && settings.github?.owner && settings.github?.repo) {
+                try {
+                  await loadFromGitHub(settings.github);
+                } catch (error) {
+                  console.warn('Caricamento da GitHub fallito, uso dati locali:', error.message);
+                }
+              }
+            } catch (error) {
+              console.error('Errore caricamento impostazioni CMS:', error);
+            }
+          }
+        }
       } catch (error) {
-        console.error('Errore caricamento contenuti CMS:', error);
+        console.error('Errore accesso localStorage:', error);
       }
-    }
+    };
     
-    if (savedSettings) {
-      try {
-        setSiteSettings(JSON.parse(savedSettings));
-      } catch (error) {
-        console.error('Errore caricamento impostazioni CMS:', error);
-      }
-    }
+    loadContent();
   }, []);
 
   // Salva contenuti nel localStorage
   const saveContentLocally = (content) => {
-    localStorage.setItem('cms-content', JSON.stringify(content));
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cms-content', JSON.stringify(content));
+      }
+    } catch (error) {
+      console.error('Errore salvataggio contenuti CMS:', error);
+    }
   };
 
   const saveSettingsLocally = (settings) => {
-    localStorage.setItem('cms-settings', JSON.stringify(settings));
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cms-settings', JSON.stringify(settings));
+      }
+    } catch (error) {
+      console.error('Errore salvataggio impostazioni CMS:', error);
+    }
   };
 
-  // Aggiorna contenuto specifico
+  // Aggiorna contenuto specifico con auto-save su GitHub (opzionale)
   const updateContent = (sectionId, field, value) => {
     const newContent = {
       ...editingContent,
@@ -77,6 +112,21 @@ export const CMSProvider = ({ children }) => {
     };
     setEditingContent(newContent);
     saveContentLocally(newContent);
+    
+    // Auto-save su GitHub se configurato e abilitato
+    if (siteSettings.github.token && siteSettings.github.autoSave) {
+      // Debounce per evitare troppi commit
+      clearTimeout(window.cmsAutoSaveTimeout);
+      window.cmsAutoSaveTimeout = setTimeout(async () => {
+        try {
+          await commitToGitHub({
+            message: `Auto-save: Updated ${sectionId}.${field}`
+          });
+        } catch (error) {
+          console.warn('Auto-save GitHub fallito:', error.message);
+        }
+      }, 5000); // 5 secondi di debounce
+    }
   };
 
   // --- NUOVO: Aggiorna colori di una sezione ---
@@ -117,19 +167,96 @@ export const CMSProvider = ({ children }) => {
     saveSettingsLocally(newSettings);
   };
 
-  // Commit su GitHub (da implementare)
+  // Commit su GitHub con implementazione completa
   const commitToGitHub = async (changes) => {
     if (!siteSettings.github.token) {
       throw new Error('Token GitHub non configurato');
     }
     
+    const { token, owner, repo } = siteSettings.github;
+    
     try {
-      // TODO: Implementare GitHub API calls
-      console.log('Committing to GitHub:', changes);
-      return { success: true, message: 'Modifiche salvate su GitHub' };
+      // 1. Ottieni il SHA del branch main
+      const branchResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      
+      if (!branchResponse.ok) {
+        throw new Error(`Errore nel recupero del branch: ${branchResponse.statusText}`);
+      }
+      
+      const branchData = await branchResponse.json();
+      const latestCommitSha = branchData.object.sha;
+      
+      // 2. Crea il file JSON con i contenuti CMS
+      const cmsData = {
+        content: editingContent,
+        settings: siteSettings,
+        lastUpdate: new Date().toISOString(),
+        version: '1.0'
+      };
+      
+      const fileContent = btoa(JSON.stringify(cmsData, null, 2));
+      
+      // 3. Verifica se il file esiste già
+      let existingFileSha = null;
+      try {
+        const fileResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/cms-data.json`, {
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        
+        if (fileResponse.ok) {
+          const fileData = await fileResponse.json();
+          existingFileSha = fileData.sha;
+        }
+      } catch (error) {
+        // File non esiste, continua senza SHA
+      }
+      
+      // 4. Crea o aggiorna il file
+      const commitData = {
+        message: changes.message || `CMS Update: ${new Date().toLocaleString('it-IT')}`,
+        content: fileContent,
+        branch: 'main'
+      };
+      
+      if (existingFileSha) {
+        commitData.sha = existingFileSha;
+      }
+      
+      const updateResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/cms-data.json`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commitData)
+      });
+      
+      if (!updateResponse.ok) {
+        const errorData = await updateResponse.json();
+        throw new Error(`Errore nel commit: ${errorData.message || updateResponse.statusText}`);
+      }
+      
+      const result = await updateResponse.json();
+      
+      return { 
+        success: true, 
+        message: 'Modifiche salvate su GitHub con successo!',
+        commitSha: result.commit.sha,
+        commitUrl: result.commit.html_url
+      };
+      
     } catch (error) {
       console.error('Errore GitHub commit:', error);
-      throw error;
+      throw new Error(`Errore nel salvataggio su GitHub: ${error.message}`);
     }
   };
 
@@ -142,6 +269,44 @@ export const CMSProvider = ({ children }) => {
     };
   };
 
+  // Carica contenuti da GitHub
+  const loadFromGitHub = async (githubConfig) => {
+    const { token, owner, repo } = githubConfig;
+    
+    try {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/cms-data.json`, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      
+      if (response.ok) {
+        const fileData = await response.json();
+        const content = JSON.parse(atob(fileData.content));
+        
+        // Verifica che i dati siano validi
+        if (content.content && content.settings) {
+          setEditingContent(content.content);
+          setSiteSettings(content.settings);
+          saveContentLocally(content.content);
+          saveSettingsLocally(content.settings);
+          
+          console.log('Contenuti caricati da GitHub con successo');
+          return { success: true, message: 'Contenuti sincronizzati da GitHub' };
+        }
+      } else if (response.status === 404) {
+        console.log('File cms-data.json non trovato su GitHub, uso dati locali');
+        return { success: false, message: 'File non trovato su GitHub' };
+      } else {
+        throw new Error(`Errore HTTP: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Errore caricamento da GitHub:', error);
+      throw new Error(`Impossibile caricare da GitHub: ${error.message}`);
+    }
+  };
+  
   // Importa contenuti da backup
   const importContent = (data) => {
     if (data.content) {
@@ -177,6 +342,7 @@ export const CMSProvider = ({ children }) => {
     
     // GitHub integration
     commitToGitHub,
+    loadFromGitHub,
     
     // Import/Export
     exportContent,
@@ -193,4 +359,4 @@ export const CMSProvider = ({ children }) => {
   );
 };
 
-export default CMSContext; 
+export default CMSContext;

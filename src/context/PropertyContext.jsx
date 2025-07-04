@@ -21,6 +21,18 @@ export const PropertyProvider = ({ children }) => {
   useEffect(() => {
     const initializeDatabase = async () => {
       try {
+        // Verifica se le variabili d'ambiente sono configurate
+        const isDatabaseConfigured = import.meta.env.VITE_TURSO_DATABASE_URL && import.meta.env.VITE_TURSO_AUTH_TOKEN;
+        
+        if (!isDatabaseConfigured) {
+          console.log('Database non configurato, usando dati di esempio');
+          setDbError('Database non configurato. Usando dati di esempio.');
+          const sampleData = getSampleProperties();
+          setProperties(sampleData);
+          setFeaturedProperties(sampleData.filter(p => p.featured));
+          return;
+        }
+
         // Crea tabella se non esiste
         await createPropertiesTable();
         
@@ -43,8 +55,9 @@ export const PropertyProvider = ({ children }) => {
         console.error('Errore inizializzazione database:', error);
         setDbError('Database non configurato. Usando dati di esempio.');
         // Fallback ai dati di esempio in caso di errore
-        setProperties(getSampleProperties());
-        setFeaturedProperties(getSampleProperties().filter(p => p.featured));
+        const sampleData = getSampleProperties();
+        setProperties(sampleData);
+        setFeaturedProperties(sampleData.filter(p => p.featured));
       } finally {
         setLoading(false);
       }

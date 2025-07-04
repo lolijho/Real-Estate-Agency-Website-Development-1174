@@ -28,6 +28,7 @@ const CMSToolbar = () => {
     exportContent, 
     importContent,
     commitToGitHub,
+    loadFromGitHub,
     siteSettings,
     getSectionColors,
     updateSectionColors,
@@ -39,6 +40,7 @@ const CMSToolbar = () => {
   const [showSectionCustomizer, setShowSectionCustomizer] = useState(false);
   const [selectedSection, setSelectedSection] = useState('hero');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isAdmin) return null;
 
@@ -96,6 +98,30 @@ const CMSToolbar = () => {
       alert('Errore nel salvataggio: ' + error.message);
     } finally {
       setIsSaving(false);
+    }
+  };
+  
+  const handleLoadFromGitHub = async () => {
+    if (!siteSettings.github.token) {
+      alert('Configura il token GitHub nelle impostazioni');
+      setShowSettings(true);
+      return;
+    }
+
+    if (!confirm('Questo sovrascriverà i contenuti locali con quelli da GitHub. Continuare?')) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await loadFromGitHub(siteSettings.github);
+      alert('Contenuti caricati da GitHub con successo!');
+      // Ricarica la pagina per applicare i nuovi contenuti
+      window.location.reload();
+    } catch (error) {
+      alert('Errore nel caricamento: ' + error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,15 +186,26 @@ const CMSToolbar = () => {
                 />
               </label>
 
+              {/* Load from GitHub */}
+              <button
+                onClick={handleLoadFromGitHub}
+                disabled={isLoading || !siteSettings.github.token}
+                className="flex items-center space-x-1 px-3 py-1 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                title="Carica da GitHub"
+              >
+                <SafeIcon icon={isLoading ? FiRefreshCw : FiDownload} className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span>{isLoading ? 'Caricando...' : 'Sync'}</span>
+              </button>
+              
               {/* Save to GitHub */}
               <button
                 onClick={handleSaveToGitHub}
-                disabled={isSaving}
+                disabled={isSaving || !siteSettings.github.token}
                 className="flex items-center space-x-1 px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors disabled:opacity-50"
                 title="Salva su GitHub"
               >
                 <SafeIcon icon={isSaving ? FiSave : FiGithub} className={`h-4 w-4 ${isSaving ? 'animate-spin' : ''}`} />
-                <span>{isSaving ? 'Salvando...' : 'GitHub'}</span>
+                <span>{isSaving ? 'Salvando...' : 'Push'}</span>
               </button>
 
               {/* Settings */}
@@ -337,6 +374,9 @@ const CMSSettings = ({ isOpen, onClose }) => {
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         Token per commit automatici. Richiede permessi di scrittura al repository.
+                        <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline ml-1">
+                          Crea token →
+                        </a>
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -359,6 +399,46 @@ const CMSSettings = ({ isOpen, onClose }) => {
                         />
                       </div>
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
+                        <input
+                          type="text"
+                          value={formData.github.branch}
+                          onChange={(e) => handleChange('github', 'branch', e.target.value)}
+                          placeholder="main"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.github.autoSave}
+                            onChange={(e) => handleChange('github', 'autoSave', e.target.checked)}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm font-medium text-gray-700">Auto-save</span>
+                        </label>
+                        <div className="ml-2 group relative">
+                          <SafeIcon icon={FiSettings} className="h-4 w-4 text-gray-400" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            Salva automaticamente ogni modifica su GitHub (5s delay)
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {formData.github.token && (
+                      <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                        <div className="flex items-center space-x-2">
+                          <SafeIcon icon={FiCheck} className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-800">GitHub configurato correttamente</span>
+                        </div>
+                        <p className="text-xs text-green-700 mt-1">
+                          Repository: {formData.github.owner}/{formData.github.repo}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -779,4 +859,4 @@ const UrlImageInput = ({ initialValue, onSubmit, disabled }) => {
   );
 };
 
-export default CMSToolbar; 
+export default CMSToolbar;
