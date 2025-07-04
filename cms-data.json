@@ -1,5 +1,15 @@
 {
-  "content": {},
+  "content": {
+    "hero": {
+      "title": "Test CMS Update",
+      "subtitle": "Debug commit from automated script",
+      "backgroundImage": "/images/hero-bg.jpg"
+    },
+    "test": {
+      "message": "Test commit from debug script",
+      "timestamp": "2025-07-04T21:07:17.506Z"
+    }
+  },
   "settings": {
     "company": {
       "name": "Affitti Urbi",
@@ -9,9 +19,9 @@
       "website": "www.affittiurbi.it"
     },
     "github": {
-      "token": "",
-      "repo": "Real-Estate-Agency-Website-Development-1174",
+      "token": "[HIDDEN]",
       "owner": "lolijho",
+      "repo": "Real-Estate-Agency-Website-Development-1174",
       "autoSave": false,
       "branch": "main"
     },
@@ -21,6 +31,6 @@
       "linkedin": ""
     }
   },
-  "lastUpdate": "2024-07-23T10:00:00.000Z",
+  "lastUpdate": "2025-07-04T21:07:17.683Z",
   "version": "1.0"
 }
