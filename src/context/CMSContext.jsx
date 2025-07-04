@@ -37,43 +37,7 @@ export const CMSProvider = ({ children }) => {
     }
   });
 
-  // Carica contenuti da GitHub
-  const loadFromGitHub = async (githubConfig) => {
-    const { token, owner, repo } = githubConfig;
-    
-    try {
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/cms-data.json`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      
-      if (response.ok) {
-        const fileData = await response.json();
-        const content = JSON.parse(atob(fileData.content));
-        
-        // Verifica che i dati siano validi
-        if (content.content && content.settings) {
-          setEditingContent(content.content);
-          setSiteSettings(content.settings);
-          saveContentLocally(content.content);
-          saveSettingsLocally(content.settings);
-          
-          console.log('Contenuti caricati da GitHub con successo');
-          return { success: true, message: 'Contenuti sincronizzati da GitHub' };
-        }
-      } else if (response.status === 404) {
-        console.log('File cms-data.json non trovato su GitHub, uso dati locali');
-        return { success: false, message: 'File non trovato su GitHub' };
-      } else {
-        throw new Error(`Errore HTTP: ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Errore caricamento da GitHub:', error);
-      throw new Error(`Impossibile caricare da GitHub: ${error.message}`);
-    }
-  };
+  // Funzione loadFromGitHub già definita sopra - rimuovo duplicato
 
   // Carica contenuti dal localStorage e GitHub
   useEffect(() => {
