@@ -10,7 +10,7 @@ import {
   FiGithub,
   FiX,
   FiCheck,
-  FiPalette,
+  FiDroplet,
   FiCode,
   FiRefreshCw
 } from 'react-icons/fi';
@@ -158,7 +158,7 @@ const CMSToolbar = () => {
                 className="flex items-center space-x-2 px-3 py-1 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors"
                 title="Personalizza Sezioni"
               >
-                <SafeIcon icon={FiPalette} className="h-4 w-4" />
+                <SafeIcon icon={FiDroplet} className="h-4 w-4" />
                 <span>Colori & CSS</span>
               </button>
 
