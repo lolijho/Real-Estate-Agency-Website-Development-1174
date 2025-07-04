@@ -261,14 +261,20 @@ const CMSSettings = ({ isOpen, onClose }) => {
   const { siteSettings, updateSiteSettings } = useCMS();
   const [formData, setFormData] = useState(siteSettings);
 
-  const handleSave = () => {
-    // Aggiorna tutte le categorie
-    Object.keys(formData).forEach(category => {
-      Object.keys(formData[category]).forEach(field => {
-        updateSiteSettings(category, field, formData[category][field]);
-      });
-    });
-    onClose();
+  const handleSave = async () => {
+    try {
+      // Aggiorna tutte le categorie e aspetta il completamento
+      for (const category of Object.keys(formData)) {
+        for (const field of Object.keys(formData[category])) {
+          await updateSiteSettings(category, field, formData[category][field]);
+        }
+      }
+      alert('Impostazioni salvate con successo!');
+      onClose();
+    } catch (error) {
+      console.error('Errore nel salvataggio delle impostazioni:', error);
+      alert('Errore nel salvataggio delle impostazioni: ' + error.message);
+    }
   };
 
   const handleChange = (category, field, value) => {
