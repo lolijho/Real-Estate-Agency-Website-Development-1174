@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
-import { uploadImage, validateImageFile, createImagePreview } from '../../api/upload';
+import { uploadImage, validateImageFile, createImagePreview, SafeImage } from '../../api/upload_fixed';
 
 const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader } = FiIcons;
 
@@ -176,10 +176,18 @@ const EditableImage = ({
       transition={{ duration: 0.2 }}
     >
       {displayImageUrl ? (
-        <img
+        <SafeImage
           src={displayImageUrl}
           alt={alt}
           className={`w-full h-full object-cover rounded-lg ${canEdit && isHovered ? 'opacity-80' : ''}`}
+          fallback={
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+              <div className="text-center text-gray-500">
+                <SafeIcon icon={FiImage} className="h-8 w-8 mx-auto mb-2" />
+                <p className="text-sm">Immagine non disponibile</p>
+              </div>
+            </div>
+          }
         />
       ) : (
         <div className={`w-full h-full flex items-center justify-center bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 ${canEdit ? 'hover:border-primary-500 hover:bg-primary-50' : ''}`}>

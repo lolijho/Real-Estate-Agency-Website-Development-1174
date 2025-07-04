@@ -6,6 +6,8 @@ import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import CMSToolbar from './components/cms/CMSToolbar';
 import SectionStyler from './components/cms/SectionStyler';
+import PageLoader from './components/ui/PageLoader';
+import { useCMS } from './context/CMSContext';
 import Home from './pages/Home';
 import Vendite from './pages/Vendite';
 import Affitti from './pages/Affitti';
@@ -17,12 +19,19 @@ import AdminLogin from './pages/AdminLogin';
 import MediaLibrary from './pages/MediaLibrary';
 
 function App() {
+  const { showPageLoader } = useCMS();
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <CMSToolbar />
-        <SectionStyler />
-        <Navbar />
+        {/* PageLoader - mostra durante il caricamento */}
+        <PageLoader isLoading={showPageLoader} />
+        
+        {/* Contenuto principale - nascosto durante il caricamento */}
+        <div style={{ opacity: showPageLoader ? 0 : 1, transition: 'opacity 0.3s ease' }}>
+          <CMSToolbar />
+          <SectionStyler />
+          <Navbar />
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -55,6 +64,7 @@ function App() {
           </Routes>
         </motion.main>
         <Footer />
+        </div> {/* Chiusura div contenuto principale */}
       </div>
     </Router>
   );

@@ -22,8 +22,9 @@ export const CMSProvider = ({ children }) => {
   const { isAdmin } = useAuth();
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingContent, setEditingContent] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false); // Nuovo stato per prevenire flash
+  const [isLoading, setIsLoading] = useState(true); // Inizia sempre con loading true
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [showPageLoader, setShowPageLoader] = useState(true); // Nuovo stato per il page loader
   const [lastSaved, setLastSaved] = useState(null);
   const [siteSettings, setSiteSettings] = useState({
     company: {
@@ -98,8 +99,12 @@ export const CMSProvider = ({ children }) => {
       } catch (error) {
         console.error('Errore inizializzazione CMS:', error);
       } finally {
-        setIsLoading(false);
-        setIsInitialized(true); // Marca come inizializzato dopo il caricamento
+        // Simula un caricamento minimo per mostrare il loader
+        setTimeout(() => {
+          setIsLoading(false);
+          setIsInitialized(true);
+          // Il PageLoader si nasconderà automaticamente quando isLoading diventa false
+        }, 1500); // Minimo 1.5 secondi di caricamento
       }
     };
     
@@ -400,7 +405,9 @@ export const CMSProvider = ({ children }) => {
     
     // Utility
     canEdit: isAdmin && isEditMode,
-    isInitialized // Nuovo stato per prevenire flash
+    isInitialized, // Stato per prevenire flash
+    isLoading, // Stato di caricamento per il PageLoader
+    showPageLoader: isLoading // Mostra il PageLoader quando è in caricamento
   };
 
   return (

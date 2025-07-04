@@ -1,4 +1,4 @@
-import { handleUpload } from '@vercel/blob/client';
+import { handleUpload } from '@vercel/blob';
 import { createClient } from '@libsql/client';
 
 // Configurazione database
@@ -44,10 +44,8 @@ export default async function handler(request, response) {
   // Gestisci richieste POST per upload
   if (request.method === 'POST') {
     try {
-      const body = await request.json();
-
       const jsonResponse = await handleUpload({
-        body,
+        body: request.body,
         request,
         onBeforeGenerateToken: async (pathname, clientPayload) => {
           // Validazione e autenticazione
