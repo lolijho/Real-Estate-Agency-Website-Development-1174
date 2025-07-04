@@ -374,7 +374,6 @@ export const CMSProvider = ({ children }) => {
     isEditMode,
     editingContent,
     siteSettings,
-    isLoading,
     lastSaved,
     
     // Controlli

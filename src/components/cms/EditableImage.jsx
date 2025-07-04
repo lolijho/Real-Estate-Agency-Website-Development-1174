@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
-import { uploadImage, validateImageFile, createImagePreview, SafeImage } from '../../api/upload_fixed';
+import { uploadImage, validateImageFile, createImagePreview, SafeImage } from '../../api/upload_fixed.jsx';
 
 const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader } = FiIcons;
 
