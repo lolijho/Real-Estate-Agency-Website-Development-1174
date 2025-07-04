@@ -24,7 +24,7 @@ export const CMSProvider = ({ children }) => {
       website: 'www.affittiurbi.it'
     },
     github: {
-      token: '',
+      token: import.meta.env.VITE_GITHUB_TOKEN || '',
       repo: 'Real-Estate-Agency-Website-Development-1174',
       owner: 'lolijho',
       autoSave: false,
