@@ -243,10 +243,18 @@ export const CMSProvider = ({ children }) => {
       const branchData = await branchResponse.json();
       const latestCommitSha = branchData.object.sha;
       
-      // 2. Crea il file JSON con i contenuti CMS
+      // 2. Crea il file JSON con i contenuti CMS (senza token sensibili)
+      const safeSettings = {
+        ...siteSettings,
+        github: {
+          ...siteSettings.github,
+          token: '[HIDDEN]' // Non salvare il token nel repository
+        }
+      };
+      
       const cmsData = {
         content: editingContent,
-        settings: siteSettings,
+        settings: safeSettings,
         lastUpdate: new Date().toISOString(),
         version: '1.0'
       };
