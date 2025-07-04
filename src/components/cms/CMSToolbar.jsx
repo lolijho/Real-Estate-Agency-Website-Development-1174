@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as FiIcons from 'react-icons/fi';
-import SafeIcon from '../../common/SafeIcon';
-import { useCMS } from '../../context/CMSContext';
-import { useAuth } from '../../context/AuthContext';
-
-const { 
+import { 
   FiEdit3, 
   FiEye, 
   FiSettings, 
@@ -18,7 +13,10 @@ const {
   FiPalette,
   FiCode,
   FiRefreshCw
-} = FiIcons;
+} from 'react-icons/fi';
+import SafeIcon from '../../common/SafeIcon';
+import { useCMS } from '../../context/CMSContext';
+import { useAuth } from '../../context/AuthContext';
 
 const CMSToolbar = () => {
   const { isAdmin } = useAuth();
