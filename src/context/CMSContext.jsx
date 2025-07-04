@@ -23,6 +23,7 @@ export const CMSProvider = ({ children }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingContent, setEditingContent] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // Nuovo stato per prevenire flash
   const [lastSaved, setLastSaved] = useState(null);
   const [siteSettings, setSiteSettings] = useState({
     company: {
@@ -98,6 +99,7 @@ export const CMSProvider = ({ children }) => {
         console.error('Errore inizializzazione CMS:', error);
       } finally {
         setIsLoading(false);
+        setIsInitialized(true); // Marca come inizializzato dopo il caricamento
       }
     };
     
@@ -397,7 +399,8 @@ export const CMSProvider = ({ children }) => {
     uploadImage,
     
     // Utility
-    canEdit: isAdmin && isEditMode
+    canEdit: isAdmin && isEditMode,
+    isInitialized // Nuovo stato per prevenire flash
   };
 
   return (

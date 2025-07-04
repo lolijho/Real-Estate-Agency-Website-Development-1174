@@ -16,7 +16,7 @@ const EditableText = ({
   multiline = false,
   maxLength = null
 }) => {
-  const { canEdit, getContent, updateContent } = useCMS();
+  const { canEdit, getContent, updateContent, isInitialized } = useCMS();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const [isHovered, setIsHovered] = useState(false);
@@ -24,6 +24,9 @@ const EditableText = ({
   const textareaRef = useRef(null);
 
   const content = getContent(sectionId, field, defaultValue);
+
+  // Se non è ancora inizializzato, mostra il valore di default per prevenire flash
+  const displayContent = isInitialized ? content : defaultValue;
 
   useEffect(() => {
     if (isEditing) {
@@ -75,19 +78,18 @@ const EditableText = ({
   };
 
   const renderContent = () => {
-    const content = getContent(sectionId, field, defaultValue);
-    const displayContent = content || placeholder;
+    const displayText = displayContent || placeholder;
     
     if (multiline) {
-      return displayContent.split('\n').map((line, index) => (
+      return displayText.split('\n').map((line, index) => (
         <React.Fragment key={index}>
           {line}
-          {index < displayContent.split('\n').length - 1 && <br />}
+          {index < displayText.split('\n').length - 1 && <br />}
         </React.Fragment>
       ));
     }
     
-    return displayContent;
+    return displayText;
   };
 
   const Tag = tag;
@@ -168,7 +170,7 @@ const EditableText = ({
       transition={{ duration: 0.2 }}
     >
       <Tag 
-        className={`${className} ${canEdit && isHovered ? 'bg-blue-50 rounded-md p-1' : ''} ${!content && canEdit ? 'text-gray-400 italic' : ''}`}
+        className={`${className} ${canEdit && isHovered ? 'bg-blue-50 rounded-md p-1' : ''} ${!displayContent && canEdit ? 'text-gray-400 italic' : ''}`}
       >
         {renderContent()}
       </Tag>
@@ -183,7 +185,7 @@ const EditableText = ({
         </motion.div>
       )}
       
-      {canEdit && !content && (
+      {canEdit && !displayContent && (
         <div className="absolute inset-0 border-2 border-dashed border-gray-300 rounded-md opacity-50 pointer-events-none" />
       )}
     </motion.div>

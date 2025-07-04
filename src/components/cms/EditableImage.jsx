@@ -17,7 +17,7 @@ const EditableImage = ({
   width = 'auto',
   height = 'auto'
 }) => {
-  const { canEdit, getContent, updateContent } = useCMS();
+  const { canEdit, getContent, updateContent, isInitialized } = useCMS();
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -25,6 +25,9 @@ const EditableImage = ({
   const fileInputRef = useRef(null);
 
   const imageUrl = getContent(sectionId, field, defaultValue);
+  
+  // Se non è ancora inizializzato, mostra il valore di default per prevenire flash
+  const displayImageUrl = isInitialized ? imageUrl : defaultValue;
 
   const handleStartEdit = () => {
     if (!canEdit) return;
@@ -172,9 +175,9 @@ const EditableImage = ({
       whileHover={canEdit ? { scale: 1.02 } : {}}
       transition={{ duration: 0.2 }}
     >
-      {imageUrl ? (
+      {displayImageUrl ? (
         <img
-          src={imageUrl}
+          src={displayImageUrl}
           alt={alt}
           className={`w-full h-full object-cover rounded-lg ${canEdit && isHovered ? 'opacity-80' : ''}`}
         />
@@ -197,7 +200,7 @@ const EditableImage = ({
         </motion.div>
       )}
       
-      {canEdit && isHovered && imageUrl && (
+      {canEdit && isHovered && displayImageUrl && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
           <div className="text-center text-white">
             <SafeIcon icon={FiEdit2} className="h-6 w-6 mx-auto mb-1" />

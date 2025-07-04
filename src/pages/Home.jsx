@@ -303,8 +303,15 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-center p-6"
             >
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <SafeIcon icon={FiShield} className="h-8 w-8 text-primary-600" />
+              <div className="w-16 h-16 rounded-full mx-auto mb-4 overflow-hidden">
+                <EditableImage
+                  sectionId="services"
+                  field="service1_image"
+                  defaultValue="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&q=80"
+                  className="w-full h-full object-cover"
+                  alt="Affidabilità"
+                  placeholder="Immagine servizio 1"
+                />
               </div>
               <EditableText
                 sectionId="services"
@@ -330,8 +337,15 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-center p-6"
             >
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <SafeIcon icon={FiHeart} className="h-8 w-8 text-primary-600" />
+              <div className="w-16 h-16 rounded-full mx-auto mb-4 overflow-hidden">
+                <EditableImage
+                  sectionId="services"
+                  field="service2_image"
+                  defaultValue="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&q=80"
+                  className="w-full h-full object-cover"
+                  alt="Professionalità"
+                  placeholder="Immagine servizio 2"
+                />
               </div>
               <EditableText
                 sectionId="services"
@@ -357,8 +371,15 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-center p-6"
             >
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <SafeIcon icon={FiTrendingUp} className="h-8 w-8 text-primary-600" />
+              <div className="w-16 h-16 rounded-full mx-auto mb-4 overflow-hidden">
+                <EditableImage
+                  sectionId="services"
+                  field="service3_image"
+                  defaultValue="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80"
+                  className="w-full h-full object-cover"
+                  alt="Risultati"
+                  placeholder="Immagine servizio 3"
+                />
               </div>
               <EditableText
                 sectionId="services"
