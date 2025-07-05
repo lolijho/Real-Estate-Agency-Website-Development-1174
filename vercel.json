@@ -1,19 +1,28 @@
 {
   "functions": {
     "api/upload.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@3.0.0"
     },
     "api/upload-new.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@3.0.0"
     },
     "api/upload-blob.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@3.0.0"
     },
     "api/upload_debug.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@3.0.0"
     },
     "api/test.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@3.0.0"
+    },
+    "api/save-image-metadata.js": {
+      "runtime": "@vercel/node@3.0.0"
+    },
+    "api/get-gallery-images.js": {
+      "runtime": "@vercel/node@3.0.0"
+    },
+    "api/upload-blob-test.js": {
+      "runtime": "@vercel/node@3.0.0"
     }
   },
   "rewrites": [
