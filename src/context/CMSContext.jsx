@@ -179,7 +179,7 @@ export const CMSProvider = ({ children }) => {
     }
   };
 
-  // Aggiorna contenuto specifico con auto-save
+  // Aggiorna contenuto specifico con auto-save immediato
   const updateContent = async (sectionId, field, value) => {
     const newContent = {
       ...editingContent,
@@ -191,15 +191,24 @@ export const CMSProvider = ({ children }) => {
     
     setEditingContent(newContent);
     
-    // Auto-save nel database con debounce
-    clearTimeout(window.cmsAutoSaveTimeout);
-    window.cmsAutoSaveTimeout = setTimeout(async () => {
+    // Salvataggio immediato nel database (senza timeout)
+    try {
+      console.log(`🔄 Salvando ${sectionId}.${field} nel database...`);
+      await saveContentToDatabase(newContent);
+      console.log(`✅ ${sectionId}.${field} salvato con successo!`);
+    } catch (error) {
+      console.warn('Salvataggio fallito:', error.message);
+      
+      // Fallback al localStorage
       try {
-        await saveContentToDatabase(newContent);
-      } catch (error) {
-        console.warn('Auto-save fallito:', error.message);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('cms-content', JSON.stringify(newContent));
+          console.log('💾 Salvato nel localStorage come fallback');
+        }
+      } catch (localError) {
+        console.error('Errore salvataggio locale:', localError);
       }
-    }, 2000); // 2 secondi di debounce
+    }
   };
 
   // Salva manualmente tutti i contenuti
