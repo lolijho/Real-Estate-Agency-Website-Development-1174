@@ -30,10 +30,10 @@ const MediaManager = ({ isOpen, onClose, onSelectImage }) => {
   const loadImages = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/upload');
+      const response = await fetch('/api/get-gallery-images');
       if (response.ok) {
         const data = await response.json();
-        setImages(data.images || []);
+        setImages(data || []);
       }
     } catch (error) {
       console.error('Errore caricamento immagini:', error);
@@ -81,16 +81,10 @@ const MediaManager = ({ isOpen, onClose, onSelectImage }) => {
     if (!confirm('Sei sicuro di voler eliminare questa immagine?')) return;
     
     try {
-      const response = await fetch(`/api/upload?imageId=${imageId}`, {
-        method: 'DELETE'
-      });
-      
-      if (response.ok) {
-        showMessage('Immagine eliminata con successo', 'success');
-        await loadImages();
-      } else {
-        showMessage('Errore nell\'eliminazione', 'error');
-      }
+      // Per ora simuliamo l'eliminazione dal localStorage
+      // In futuro, implementeremo l'eliminazione da Cloudinary
+      showMessage('Eliminazione da Cloudinary non ancora implementata', 'info');
+      console.log('TODO: Implementare eliminazione da Cloudinary per:', imageId);
     } catch (error) {
       showMessage('Errore nell\'eliminazione', 'error');
     }

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
-import { uploadImage, validateImageFile, createImagePreview } from '../api/upload';
+import { uploadToCloudinary, validateImageFile, createImagePreview } from '../lib/cloudinaryUpload';
 
 const { FiUpload, FiX, FiImage, FiLoader } = FiIcons;
 
@@ -55,7 +55,9 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
             }));
           }, 100);
 
-          const uploadedUrl = await uploadImage(file);
+          const uploadedUrl = await uploadToCloudinary(file, {
+            transformation: 'c_fill,w_800,h_600,q_auto' // Ottimizzazione per annunci immobiliari
+          });
           
           // Pulisce il progress e aggiorna con URL reale
           clearInterval(progressInterval);
@@ -151,7 +153,7 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
               Trascina qui le immagini o clicca per selezionare
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              JPG, PNG, WebP - Max 10MB ciascuna • Salvate su Vercel Blob ({images.length}/{maxImages})
+              JPG, PNG, WebP - Max 10MB ciascuna • Salvate su Cloudinary ({images.length}/{maxImages})
             </p>
           </div>
         </div>
@@ -181,7 +183,7 @@ const ImageUpload = ({ images = [], onImagesChange, maxImages = 5 }) => {
                     <div className="text-center text-white">
                       <SafeIcon icon={FiLoader} className="h-6 w-6 animate-spin mx-auto mb-2" />
                       <p className="text-sm">
-                        Vercel Blob: {uploadProgress[image.id] || 0}%
+                        Cloudinary: {uploadProgress[image.id] || 0}%
                       </p>
                     </div>
                   </div>

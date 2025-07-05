@@ -324,27 +324,19 @@ export const CMSProvider = ({ children }) => {
   // Gestione immagini
   const uploadImage = async (file, sectionId, fieldName) => {
     try {
-      // Qui implementeremo l'upload su Vercel Blob
-      // Per ora usiamo un placeholder
-      const formData = new FormData();
-      formData.append('file', file);
+      // Import dinamico per evitare problemi di importazione circolare
+      const { uploadToCloudinary } = await import('../lib/cloudinaryUpload');
       
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
+      // Upload su Cloudinary
+      const imageUrl = await uploadToCloudinary(file, {
+        transformation: 'c_fill,w_800,h_600,q_auto' // Ottimizzazione per CMS
       });
-      
-      if (!response.ok) {
-        throw new Error('Errore nell\'upload dell\'immagine');
-      }
-      
-      const result = await response.json();
       
       // Salva metadati nel database
       const imageData = {
-        filename: result.filename,
+        filename: file.name,
         originalName: file.name,
-        blobUrl: result.url,
+        blobUrl: imageUrl,
         fileSize: file.size,
         mimeType: file.type,
         sectionId,
@@ -354,9 +346,9 @@ export const CMSProvider = ({ children }) => {
       await cmsImageService.add(imageData);
       
       // Aggiorna il contenuto con l'URL dell'immagine
-      await updateContent(sectionId, fieldName, result.url);
+      await updateContent(sectionId, fieldName, imageUrl);
       
-      return { success: true, url: result.url, message: 'Immagine caricata con successo!' };
+      return { success: true, url: imageUrl, message: 'Immagine caricata su Cloudinary con successo!' };
     } catch (error) {
       return { success: false, message: 'Errore nel caricamento: ' + error.message };
     }

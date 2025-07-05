@@ -74,6 +74,36 @@ export const uploadToCloudinary = async (file) => {
 };
 
 /**
+ * Valida un file immagine
+ * @param {File} file - File da validare
+ */
+export const validateImageFile = (file) => {
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+  
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Formato file non supportato. Usa JPG, PNG, WebP o GIF.');
+  }
+  
+  if (file.size > maxSize) {
+    throw new Error('File troppo grande. Massimo 10MB.');
+  }
+};
+
+/**
+ * Crea anteprima di un file immagine
+ * @param {File} file - File immagine
+ * @returns {Promise<string>} Data URL per l'anteprima
+ */
+export const createImagePreview = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => resolve(e.target.result);
+    reader.readAsDataURL(file);
+  });
+};
+
+/**
  * Ottiene le immagini dalla galleria
  */
 export const getGalleryImages = async () => {
@@ -87,5 +117,5 @@ export const getGalleryImages = async () => {
   }
 };
 
-export default { uploadToCloudinary, getGalleryImages };
+export default { uploadToCloudinary, validateImageFile, createImagePreview, getGalleryImages };
 

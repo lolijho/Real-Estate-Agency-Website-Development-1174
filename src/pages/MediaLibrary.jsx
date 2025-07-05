@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { uploadImage, validateImageFile } from '../api/upload';
+import { uploadToCloudinary, validateImageFile } from '../lib/cloudinaryUpload';
 import SafeIcon from '../common/SafeIcon';
 
 const MediaLibrary = () => {
@@ -43,8 +43,10 @@ const MediaLibrary = () => {
         // Simula progresso
         setUploadProgress(Math.round((i / files.length) * 50));
         
-        // Upload su Vercel Blob
-        const url = await uploadImage(file);
+        // Upload su Cloudinary
+        const url = await uploadToCloudinary(file, {
+          transformation: 'c_fill,w_800,h_600,q_auto' // Ottimizzazione per media library
+        });
         
         const imageData = {
           id: Date.now() + i,
@@ -142,7 +144,7 @@ const MediaLibrary = () => {
               {isUploading ? (
                 <div>
                   <p className="text-lg font-medium text-gray-900 mb-2">
-                    Caricamento su Vercel Blob...
+                    Caricamento su Cloudinary...
                   </p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div 
