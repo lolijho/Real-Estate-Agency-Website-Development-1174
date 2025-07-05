@@ -3,9 +3,9 @@ import { useCMS } from '../context/CMSContext';
 
 // Configurazione Cloudinary
 const CLOUDINARY_CONFIG = {
-  cloudName: 'affitti-urbi', // Sostituire con il tuo cloud name
-  uploadPreset: 'affitti_urbi_preset', // Sostituire con il tuo upload preset
-  apiKey: '123456789012345', // Sostituire con la tua API key
+  cloudName: 'dibgttpau', // Cloud Name fornito dall'utente
+  uploadPreset: 'affitti_urbi_preset', // Upload preset da creare
+  apiKey: 'g_Vu8_a2bO63Xyk2lWfgfO8b86Q', // API Key fornita dall'utente
   folder: 'affitti-urbi' // Cartella per organizzare le immagini
 };
 
