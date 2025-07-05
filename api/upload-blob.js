@@ -40,10 +40,11 @@ export default async function handler(request, response) {
       
       console.log('Uploading file:', filename);
 
-      // Upload su Vercel Blob
+      // Upload su Vercel Blob con Store ID
       const blob = await put(filename, request.body, {
         access: 'public',
         token: process.env.BLOB_READ_WRITE_TOKEN,
+        ...(process.env.BLOB_STORE_ID && { storeId: process.env.BLOB_STORE_ID }),
       });
 
       console.log('Blob uploaded:', blob.url);
