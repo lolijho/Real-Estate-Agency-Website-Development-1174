@@ -6,7 +6,13 @@
     "api/upload-new.js": {
       "runtime": "nodejs18.x"
     },
+    "api/upload-blob.js": {
+      "runtime": "nodejs18.x"
+    },
     "api/upload_debug.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/test.js": {
       "runtime": "nodejs18.x"
     }
   },

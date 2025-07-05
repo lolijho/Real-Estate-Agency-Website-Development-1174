@@ -1,17 +1,36 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUpload, FiX, FiImage, FiCheck, FiAlertCircle } from 'react-icons/fi';
+import { FiUpload, FiX, FiImage, FiCheck, FiAlertCircle, FiFolder } from 'react-icons/fi';
 import { useCMS } from '../../context/CMSContext';
+import MediaGallery from './MediaGallery';
 
 const HeroImageEditor = ({ isOpen, onClose }) => {
   const { getContent, updateContent } = useCMS();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [showMediaGallery, setShowMediaGallery] = useState(false);
   const fileInputRef = useRef(null);
 
   // Ottieni l'immagine hero attuale
   const currentImage = getContent('hero', 'backgroundImage');
+
+  const handleImageFromGallery = async (imageUrl) => {
+    try {
+      // Aggiorna il contenuto con l'immagine selezionata
+      await updateContent('hero', 'backgroundImage', imageUrl);
+      setUploadSuccess(true);
+      setShowMediaGallery(false);
+      
+      // Chiudi l'editor dopo 2 secondi
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (error) {
+      console.error('Errore selezione immagine:', error);
+      setUploadError('Errore durante la selezione dell\'immagine');
+    }
+  };
 
   const handleFileSelect = async (file) => {
     if (!file) return;
@@ -41,10 +60,16 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
       formData.append('sectionId', 'hero');
       formData.append('fieldName', 'backgroundImage');
 
-      // Upload tramite API nuova (bypass cache)
-      const response = await fetch('/api/upload-new', {
+      // Upload tramite API Blob nuova
+      const timestamp = Date.now();
+      const filename = `hero-${timestamp}-${file.name}`;
+      
+      const response = await fetch(`/api/upload-blob?filename=${encodeURIComponent(filename)}&sectionId=hero&fieldName=backgroundImage`, {
         method: 'POST',
-        body: formData,
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
       });
 
       if (!response.ok) {
@@ -182,13 +207,24 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
                 <p className="text-gray-600 mb-2">Trascina un'immagine qui o clicca per selezionare</p>
                 <p className="text-sm text-gray-500 mb-4">JPG, PNG, WebP - Max 10MB</p>
                 
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isUploading ? 'Caricamento...' : 'Seleziona File'}
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isUploading ? 'Caricamento...' : 'Seleziona File'}
+                  </button>
+                  
+                  <button
+                    onClick={() => setShowMediaGallery(true)}
+                    disabled={isUploading}
+                    className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  >
+                    <FiFolder className="w-4 h-4" />
+                    Galleria
+                  </button>
+                </div>
 
                 <input
                   ref={fileInputRef}
@@ -212,6 +248,14 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Media Gallery */}
+      <MediaGallery
+        isOpen={showMediaGallery}
+        onClose={() => setShowMediaGallery(false)}
+        onSelectImage={handleImageFromGallery}
+        allowUpload={true}
+      />
     </AnimatePresence>
   );
 };
