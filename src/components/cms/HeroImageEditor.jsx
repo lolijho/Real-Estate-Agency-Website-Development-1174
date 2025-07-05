@@ -41,8 +41,8 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
       formData.append('sectionId', 'hero');
       formData.append('fieldName', 'backgroundImage');
 
-      // Upload tramite API
-      const response = await fetch('/api/upload', {
+      // Upload tramite API nuova (bypass cache)
+      const response = await fetch('/api/upload-new', {
         method: 'POST',
         body: formData,
       });
