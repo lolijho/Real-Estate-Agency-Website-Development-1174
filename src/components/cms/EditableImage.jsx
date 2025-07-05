@@ -245,7 +245,7 @@ const EditableImage = ({
             <SafeIcon icon={FiEdit2} className="h-6 w-6 mx-auto mb-1" />
             <p className="text-sm">Clicca per modificare</p>
           </div>
-        </motion.div>
+        </div>
       )}
     </motion.div>
     
