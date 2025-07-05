@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 // API Upload con gestione corretta delle immagini Vercel Blob
 
 export const validateImageFile = (file) => {
