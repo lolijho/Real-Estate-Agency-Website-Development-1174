@@ -28,6 +28,15 @@ const EditableImage = ({
   
   // Se non è ancora inizializzato, mostra il valore di default per prevenire flash
   const displayImageUrl = isInitialized ? imageUrl : defaultValue;
+  
+  // Debug logging
+  console.log(`🖼️ EditableImage Debug - ${sectionId}.${field}:`, {
+    imageUrl,
+    defaultValue,
+    displayImageUrl,
+    isInitialized,
+    canEdit
+  });
 
   const handleStartEdit = () => {
     if (!canEdit) return;

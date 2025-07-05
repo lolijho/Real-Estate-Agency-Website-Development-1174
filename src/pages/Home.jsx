@@ -70,7 +70,7 @@ const Home = () => {
             <EditableImage
               sectionId="hero"
               field="backgroundImage"
-              defaultValue="https://images.unsplash.com/photo-1520637836862-4d197d17c80a?w=1200&q=80"
+              defaultValue="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200"
               className="w-full h-full object-cover"
               alt="Hero Background"
               placeholder="Carica immagine di sfondo"
@@ -121,7 +121,7 @@ const Home = () => {
           <EditableImage
             sectionId="hero"
             field="backgroundImage"
-            defaultValue="https://images.unsplash.com/photo-1520637836862-4d197d17c80a?w=1200&q=80"
+            defaultValue="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200"
             className="absolute inset-0 w-full h-full object-cover object-center z-0"
             alt="Hero Background"
             placeholder="Carica immagine di sfondo"
