@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiUpload, FiX, FiImage, FiCheck, FiAlertCircle, FiFolder } from 'react-icons/fi';
 import { useCMS } from '../../context/CMSContext';
+import { uploadImageToBlob } from '../../lib/blobUpload';
 import MediaGallery from './MediaGallery';
 
 const HeroImageEditor = ({ isOpen, onClose }) => {
@@ -35,51 +36,21 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
   const handleFileSelect = async (file) => {
     if (!file) return;
 
-    // Validazione file
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError('Formato file non supportato. Usa JPG, PNG o WebP.');
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) { // 10MB
-      setUploadError('File troppo grande. Massimo 10MB.');
-      return;
-    }
-
     setIsUploading(true);
     setUploadError(null);
     setUploadSuccess(false);
 
     try {
-      // Crea FormData per l'upload
-      const formData = new FormData();
-      formData.append('file', file);
+      console.log('🔄 Uploading file via new blob library:', file.name);
 
-      // Aggiungi metadati
-      formData.append('sectionId', 'hero');
-      formData.append('fieldName', 'backgroundImage');
-
-      // Upload tramite API Blob nuova
-      const timestamp = Date.now();
-      const filename = `hero-${timestamp}-${file.name}`;
-      
-      const response = await fetch(`/api/upload-blob?filename=${encodeURIComponent(filename)}&sectionId=hero&fieldName=backgroundImage`, {
-        method: 'POST',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
+      // Upload tramite la nuova libreria
+      const result = await uploadImageToBlob(file, {
+        filename: `hero-${Date.now()}-${file.name}`
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Errore HTTP: ${response.status}`);
-      }
+      console.log('✅ Upload result:', result);
 
-      const result = await response.json();
-      
-      if (result.url) {
+      if (result.success && result.url) {
         // Aggiorna il contenuto con la nuova immagine
         await updateContent('hero', 'backgroundImage', result.url);
         setUploadSuccess(true);

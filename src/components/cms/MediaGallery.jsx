@@ -4,6 +4,7 @@ import {
   FiUpload, FiX, FiImage, FiCheck, FiAlertCircle, 
   FiTrash2, FiEye, FiDownload, FiGrid, FiList 
 } from 'react-icons/fi';
+import { uploadImageToBlob } from '../../lib/blobUpload';
 
 const MediaGallery = ({ isOpen, onClose, onSelectImage, allowUpload = true }) => {
   const [images, setImages] = useState([]);
@@ -41,56 +42,43 @@ const MediaGallery = ({ isOpen, onClose, onSelectImage, allowUpload = true }) =>
   const handleFileSelect = async (file) => {
     if (!file) return;
 
-    // Validazione file
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError('Formato file non supportato. Usa JPG, PNG, WebP o GIF.');
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) { // 10MB
-      setUploadError('File troppo grande. Massimo 10MB.');
-      return;
-    }
-
     setIsUploading(true);
     setUploadError(null);
 
     try {
-      // Genera nome file unico
-      const timestamp = Date.now();
-      const filename = `${timestamp}-${file.name}`;
+      console.log('🔄 MediaGallery uploading:', file.name);
 
-      // Upload tramite API Blob
-      const response = await fetch(`/api/upload-blob?filename=${encodeURIComponent(filename)}`, {
-        method: 'POST',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
+      // Upload tramite la nuova libreria
+      const result = await uploadImageToBlob(file, {
+        filename: `gallery-${Date.now()}-${file.name}`
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Errore HTTP: ${response.status}`);
-      }
-
-      const result = await response.json();
+      console.log('✅ MediaGallery upload result:', result);
       
       if (result.success && result.url) {
-        // Ricarica la galleria
-        await loadImages();
+        // Aggiungi l'immagine alla lista locale
+        const newImage = {
+          id: Date.now(),
+          filename: result.filename,
+          originalName: result.originalName,
+          blobUrl: result.url,
+          fileSize: result.size,
+          mimeType: result.type,
+          createdAt: new Date().toISOString()
+        };
+
+        setImages(prev => [newImage, ...prev]);
         
         // Se è stata selezionata un'immagine, chiama il callback
         if (onSelectImage) {
           onSelectImage(result.url);
         }
       } else {
-        throw new Error('URL immagine non ricevuto dal server');
+        throw new Error('URL immagine non ricevuto');
       }
 
     } catch (error) {
-      console.error('Errore upload:', error);
+      console.error('Errore upload MediaGallery:', error);
       setUploadError(error.message || 'Errore durante l\'upload dell\'immagine');
     } finally {
       setIsUploading(false);
