@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
-import { uploadImage, validateImageFile, createImagePreview, SafeImage } from '../../api/upload_fixed.jsx';
+import { uploadToCloudinary, validateImageFile, createImagePreview } from '../../lib/cloudinaryUpload';
 import MediaGallery from './MediaGallery';
 
 const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader, FiFolder } = FiIcons;
@@ -65,8 +65,10 @@ const EditableImage = ({
       const preview = await createImagePreview(file);
       setPreviewUrl(preview);
       
-      // Upload del file
-      const uploadedUrl = await uploadImage(file);
+      // Upload del file tramite Cloudinary
+      const uploadedUrl = await uploadToCloudinary(file, {
+        transformation: 'c_fill,w_800,h_600,q_auto' // Ottimizzazione generale
+      });
       
       // Salva l'URL
       updateContent(sectionId, field, uploadedUrl);

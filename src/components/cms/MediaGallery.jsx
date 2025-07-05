@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiUpload, FiX, FiImage, FiCheck, FiAlertCircle, 
-  FiTrash2, FiEye, FiDownload, FiGrid, FiList 
-} from 'react-icons/fi';
-import { uploadImageToBlob } from '../../lib/blobUpload';
+import { FiUpload, FiX, FiImage, FiTrash2, FiGrid, FiList, FiSearch } from 'react-icons/fi';
+import { uploadToCloudinary, getGalleryImages, validateImageFile, createImagePreview } from '../../lib/cloudinaryUpload';
 
 const MediaGallery = ({ isOpen, onClose, onSelectImage, allowUpload = true }) => {
   const [images, setImages] = useState([]);
@@ -25,15 +22,12 @@ const MediaGallery = ({ isOpen, onClose, onSelectImage, allowUpload = true }) =>
   const loadImages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/upload-blob');
-      if (response.ok) {
-        const data = await response.json();
-        setImages(data.images || []);
-      } else {
-        console.error('Errore caricamento immagini:', response.status);
-      }
+      const images = await getGalleryImages();
+      setImages(images || []);
+      console.log(`📋 Caricate ${images.length} immagini dalla galleria`);
     } catch (error) {
       console.error('Errore caricamento immagini:', error);
+      setImages([]);
     } finally {
       setIsLoading(false);
     }
@@ -46,35 +40,23 @@ const MediaGallery = ({ isOpen, onClose, onSelectImage, allowUpload = true }) =>
     setUploadError(null);
 
     try {
-      console.log('🔄 MediaGallery uploading:', file.name);
+      console.log('🔄 MediaGallery uploading via Cloudinary:', file.name);
 
-      // Upload tramite la nuova libreria
-      const result = await uploadImageToBlob(file, {
-        filename: `gallery-${Date.now()}-${file.name}`
+      // Valida il file
+      validateImageFile(file);
+
+      // Upload tramite Cloudinary
+      const imageUrl = await uploadToCloudinary(file, {
+        transformation: 'c_fill,w_800,h_600,q_auto' // Ottimizzazione per galleria
       });
-
-      console.log('✅ MediaGallery upload result:', result);
+      console.log('✅ MediaGallery upload Cloudinary completato:', imageUrl);
       
-      if (result.success && result.url) {
-        // Aggiungi l'immagine alla lista locale
-        const newImage = {
-          id: Date.now(),
-          filename: result.filename,
-          originalName: result.originalName,
-          blobUrl: result.url,
-          fileSize: result.size,
-          mimeType: result.type,
-          createdAt: new Date().toISOString()
-        };
-
-        setImages(prev => [newImage, ...prev]);
-        
-        // Se è stata selezionata un'immagine, chiama il callback
-        if (onSelectImage) {
-          onSelectImage(result.url);
-        }
-      } else {
-        throw new Error('URL immagine non ricevuto');
+      // Ricarica la galleria per mostrare la nuova immagine
+      await loadImages();
+      
+      // Se è stata selezionata un'immagine, chiama il callback
+      if (onSelectImage) {
+        onSelectImage(imageUrl);
       }
 
     } catch (error) {

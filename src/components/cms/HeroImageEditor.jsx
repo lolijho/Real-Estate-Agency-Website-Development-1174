@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiUpload, FiX, FiImage, FiCheck, FiAlertCircle, FiFolder } from 'react-icons/fi';
 import { useCMS } from '../../context/CMSContext';
-import { uploadImageToBlob } from '../../lib/blobUpload';
+import { uploadToCloudinary, validateImageFile, createImagePreview } from '../../lib/cloudinaryUpload';
 import MediaGallery from './MediaGallery';
 
 const HeroImageEditor = ({ isOpen, onClose }) => {
@@ -41,27 +41,26 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
     setUploadSuccess(false);
 
     try {
-      console.log('🔄 Uploading file via new blob library:', file.name);
+      console.log('🔄 Uploading file via Cloudinary:', file.name);
 
-      // Upload tramite la nuova libreria
-      const result = await uploadImageToBlob(file, {
-        filename: `hero-${Date.now()}-${file.name}`
+      // Valida il file
+      validateImageFile(file);
+
+      // Upload tramite Cloudinary
+      const imageUrl = await uploadToCloudinary(file, {
+        transformation: 'c_fill,w_1200,h_600,q_auto' // Ottimizzazione per hero image
       });
 
-      console.log('✅ Upload result:', result);
+      console.log('✅ Upload Cloudinary completato:', imageUrl);
 
-      if (result.success && result.url) {
-        // Aggiorna il contenuto con la nuova immagine
-        await updateContent('hero', 'backgroundImage', result.url);
-        setUploadSuccess(true);
-        
-        // Chiudi l'editor dopo 2 secondi
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      } else {
-        throw new Error('URL immagine non ricevuto dal server');
-      }
+      // Aggiorna il contenuto con la nuova immagine
+      await updateContent('hero', 'backgroundImage', imageUrl);
+      setUploadSuccess(true);
+      
+      // Chiudi l'editor dopo 2 secondi
+      setTimeout(() => {
+        onClose();
+      }, 2000);
 
     } catch (error) {
       console.error('Errore upload:', error);
