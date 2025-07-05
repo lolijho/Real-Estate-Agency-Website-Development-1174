@@ -4,8 +4,9 @@ import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
 import { uploadImage, validateImageFile, createImagePreview, SafeImage } from '../../api/upload_fixed.jsx';
+import MediaGallery from './MediaGallery';
 
-const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader } = FiIcons;
+const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader, FiFolder } = FiIcons;
 
 const EditableImage = ({ 
   sectionId, 
@@ -22,6 +23,7 @@ const EditableImage = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [showMediaGallery, setShowMediaGallery] = useState(false);
   const fileInputRef = useRef(null);
 
   const imageUrl = getContent(sectionId, field, defaultValue);
@@ -41,6 +43,12 @@ const EditableImage = ({
   const handleStartEdit = () => {
     if (!canEdit) return;
     setIsEditing(true);
+  };
+
+  const handleImageFromGallery = (imageUrl) => {
+    updateContent(sectionId, field, imageUrl);
+    setShowMediaGallery(false);
+    setIsEditing(false);
   };
 
   const handleFileSelect = async (e) => {
@@ -128,14 +136,25 @@ const EditableImage = ({
                 className="hidden"
                 disabled={isUploading}
               />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50 mx-auto"
-              >
-                <SafeIcon icon={FiUpload} className="h-4 w-4" />
-                <span>Carica Nuova Immagine</span>
-              </button>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50"
+                >
+                  <SafeIcon icon={FiUpload} className="h-4 w-4" />
+                  <span>Carica Nuova</span>
+                </button>
+                
+                <button
+                  onClick={() => setShowMediaGallery(true)}
+                  disabled={isUploading}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50"
+                >
+                  <SafeIcon icon={FiFolder} className="h-4 w-4" />
+                  <span>Galleria</span>
+                </button>
+              </div>
             </div>
 
             {/* URL Input */}
@@ -175,10 +194,11 @@ const EditableImage = ({
   }
 
   return (
+    <>
     <motion.div
-      className={`relative ${canEdit ? 'cursor-pointer' : ''} ${className}`}
+      className={`relative cursor-pointer ${className}`}
       style={{ width, height }}
-      onMouseEnter={() => canEdit && setIsHovered(true)}
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleStartEdit}
       whileHover={canEdit ? { scale: 1.02 } : {}}
@@ -222,10 +242,18 @@ const EditableImage = ({
           <div className="text-center text-white">
             <SafeIcon icon={FiEdit2} className="h-6 w-6 mx-auto mb-1" />
             <p className="text-sm">Clicca per modificare</p>
-          </div>
-        </div>
+          </di        </motion.div>
       )}
     </motion.div>
+    
+    {/* Media Gallery */}
+    <MediaGallery
+      isOpen={showMediaGallery}
+      onClose={() => setShowMediaGallery(false)}
+      onSelectImage={handleImageFromGallery}
+      allowUpload={true}
+    />
+  </>
   );
 };
 
