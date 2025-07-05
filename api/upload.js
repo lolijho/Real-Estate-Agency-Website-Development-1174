@@ -1,9 +1,15 @@
 import { handleUpload } from '@vercel/blob';
 import { createClient } from '@libsql/client';
 
-// Configurazione database
-const DATABASE_URL = process.env.VITE_TURSO_DATABASE_URL;
-const AUTH_TOKEN = process.env.VITE_TURSO_AUTH_TOKEN;
+// Configurazione database - usa variabili senza prefisso VITE_ per l'API
+const DATABASE_URL = process.env.TURSO_DATABASE_URL || process.env.VITE_TURSO_DATABASE_URL;
+const AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || process.env.VITE_TURSO_AUTH_TOKEN;
+
+console.log('Database config:', { 
+  hasUrl: !!DATABASE_URL, 
+  hasToken: !!AUTH_TOKEN,
+  url: DATABASE_URL?.substring(0, 50) + '...'
+});
 
 const client = DATABASE_URL && AUTH_TOKEN ? createClient({
   url: DATABASE_URL,
@@ -41,13 +47,28 @@ async function saveImageMetadata(imageData) {
 }
 
 export default async function handler(request, response) {
+  console.log('API Upload chiamata:', request.method);
+  
   // Gestisci richieste POST per upload
   if (request.method === 'POST') {
     try {
+      // Verifica che il token Blob sia disponibile
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        console.error('BLOB_READ_WRITE_TOKEN non configurato');
+        return response.status(500).json({ 
+          error: 'Configurazione Vercel Blob mancante',
+          details: 'BLOB_READ_WRITE_TOKEN non trovato'
+        });
+      }
+
+      console.log('Iniziando upload con Vercel Blob...');
+      
       const jsonResponse = await handleUpload({
         body: request.body,
         request,
         onBeforeGenerateToken: async (pathname, clientPayload) => {
+          console.log('onBeforeGenerateToken:', { pathname, clientPayload });
+          
           // Validazione e autenticazione
           return {
             allowedContentTypes: [
@@ -71,7 +92,7 @@ export default async function handler(request, response) {
           console.log('Upload completato:', blob.url);
           
           try {
-            const payload = JSON.parse(tokenPayload);
+            const payload = JSON.parse(tokenPayload || '{}');
             
             // Estrai informazioni dal blob URL
             const urlParts = blob.url.split('/');
@@ -82,7 +103,7 @@ export default async function handler(request, response) {
               filename: filename,
               originalName: payload.originalName || filename,
               blobUrl: blob.url,
-              fileSize: blob.size,
+              fileSize: blob.size || 0,
               mimeType: blob.contentType || 'image/jpeg',
               sectionId: payload.sectionId,
               fieldName: payload.fieldName
@@ -97,10 +118,16 @@ export default async function handler(request, response) {
         },
       });
 
+      console.log('Upload response:', jsonResponse);
       return response.status(200).json(jsonResponse);
+      
     } catch (error) {
       console.error('Errore API upload:', error);
-      return response.status(400).json({ error: error.message });
+      return response.status(500).json({ 
+        error: 'Errore interno del server',
+        message: error.message,
+        details: error.toString()
+      });
     }
   }
   
