@@ -29,9 +29,8 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
 
     setIsUploading(true);
     try {
-      const result = await uploadImage(file);
+      const result = await uploadImage(file, 'hero', 'backgroundImage');
       if (result.success) {
-        await updateContent('hero.backgroundImage', result.url);
         showMessage('Immagine hero aggiornata con successo!', 'success');
         setTimeout(() => {
           onClose();
@@ -41,7 +40,7 @@ const HeroImageEditor = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       console.error('Errore upload:', error);
-      showMessage('Errore nel caricamento dell\'immagine', 'error');
+      showMessage('Errore nell\'upload dell\'immagine', 'error');
     } finally {
       setIsUploading(false);
     }
