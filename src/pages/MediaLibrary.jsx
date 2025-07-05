@@ -43,7 +43,7 @@ const MediaLibrary = () => {
         // Simula progresso
         setUploadProgress(Math.round((i / files.length) * 50));
         
-        // Upload su Vercel Blob
+        // Upload su Cloudinary
         const url = await uploadImage(file);
         
         const imageData = {
@@ -142,7 +142,7 @@ const MediaLibrary = () => {
               {isUploading ? (
                 <div>
                   <p className="text-lg font-medium text-gray-900 mb-2">
-                    Caricamento su Vercel Blob...
+                    Caricamento su Cloudinary...
                   </p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div 

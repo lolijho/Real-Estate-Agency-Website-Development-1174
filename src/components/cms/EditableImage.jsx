@@ -120,7 +120,7 @@ const EditableImage = ({
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
                   <div className="text-center text-white">
                     <SafeIcon icon={FiLoader} className="h-8 w-8 animate-spin mx-auto mb-2" />
-                    <p>Caricamento su Vercel Blob...</p>
+                    <p>Caricamento su Cloudinary...</p>
                   </div>
                 </div>
               )}
@@ -244,7 +244,8 @@ const EditableImage = ({
           <div className="text-center text-white">
             <SafeIcon icon={FiEdit2} className="h-6 w-6 mx-auto mb-1" />
             <p className="text-sm">Clicca per modificare</p>
-          </di        </motion.div>
+          </div>
+        </motion.div>
       )}
     </motion.div>
     

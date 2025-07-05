@@ -1,33 +1,21 @@
-import { put } from '@vercel/blob';
+import { uploadToCloudinary } from '../lib/cloudinaryUpload';
 
-// Upload utility per immagini con Vercel Blob
+// Upload utility per immagini con Cloudinary
 export const uploadImage = async (file) => {
   try {
-    // Upload a Vercel Blob
-    const blob = await put(file.name, file, {
-      access: 'public',
-      handleUploadUrl: '/api/upload'
-    });
-    
-    return blob.url;
+    // Upload a Cloudinary
+    const imageUrl = await uploadToCloudinary(file);
+    return imageUrl;
   } catch (error) {
-    console.error('Errore upload Vercel Blob:', error);
-    
-    // Fallback temporaneo se Vercel Blob non è configurato
-    console.warn('Fallback a Object URL temporaneo');
-    const objectUrl = URL.createObjectURL(file);
-    
-    // Simula un delay di upload
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-    
-    return objectUrl;
+    console.error('Errore upload Cloudinary:', error);
+    throw error;
   }
 };
 
 // Utility per validare il file immagine
 export const validateImageFile = (file) => {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-  const maxSize = 10 * 1024 * 1024; // 10MB per Vercel Blob
+  const maxSize = 10 * 1024 * 1024; // 10MB per Cloudinary
 
   if (!validTypes.includes(file.type)) {
     throw new Error('Tipo file non supportato. Usa JPG, PNG o WebP.');
