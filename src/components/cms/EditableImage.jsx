@@ -4,6 +4,7 @@ import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
 import { uploadToCloudinary, validateImageFile, createImagePreview } from '../../lib/cloudinaryUpload';
+import { SafeImage } from '../../api/upload_fixed';
 import MediaGallery from './MediaGallery';
 
 const { FiImage, FiUpload, FiEdit2, FiCheck, FiX, FiLoader, FiFolder } = FiIcons;
