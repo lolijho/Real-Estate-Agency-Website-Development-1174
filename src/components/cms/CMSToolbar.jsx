@@ -47,8 +47,6 @@ const CMSToolbar = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  if (!isAdmin) return null;
-
   const handleToggleEdit = () => {
     setIsEditMode(!isEditMode);
   };
@@ -140,159 +138,162 @@ const CMSToolbar = () => {
 
   return (
     <>
-      <motion.div
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
-      >
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-600">CMS Admin</span>
-            {isLoading && (
-              <div className="flex items-center space-x-1 text-blue-600">
-                <SafeIcon icon={FiDatabase} className="w-4 h-4 animate-pulse" />
-                <span className="text-xs">Sincronizzazione...</span>
-              </div>
-            )}
-            {lastSaved && !isLoading && (
-              <div className="flex items-center space-x-1 text-green-600">
-                <SafeIcon icon={FiCheckCircle} className="w-4 h-4" />
-                <span className="text-xs">{formatLastSaved()}</span>
-              </div>
-            )}
+      {/* Toolbar: visibile solo per admin */}
+      {isAdmin && (
+        <motion.div
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
+        >
+          <div className="flex items-center justify-between px-4 py-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-600">CMS Admin</span>
+              {isLoading && (
+                <div className="flex items-center space-x-1 text-blue-600">
+                  <SafeIcon icon={FiDatabase} className="w-4 h-4 animate-pulse" />
+                  <span className="text-xs">Sincronizzazione...</span>
+                </div>
+              )}
+              {lastSaved && !isLoading && (
+                <div className="flex items-center space-x-1 text-green-600">
+                  <SafeIcon icon={FiCheckCircle} className="w-4 h-4" />
+                  <span className="text-xs">{formatLastSaved()}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              {/* Pulsante Modifica/Visualizza */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleToggleEdit}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isEditMode 
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                }`}
+              >
+                <SafeIcon icon={isEditMode ? FiEye : FiEdit3} className="w-4 h-4" />
+                <span>{isEditMode ? 'Visualizza' : 'Modifica'}</span>
+              </motion.button>
+
+              {/* Pulsante Colori & CSS */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowSectionCustomizer(true)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+              >
+                <SafeIcon icon={FiDroplet} className="w-4 h-4" />
+                <span>Colori & CSS</span>
+              </motion.button>
+
+              {/* Pulsante Hero Image */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowHeroImageEditor(true)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors"
+              >
+                <SafeIcon icon={FiImage} className="w-4 h-4" />
+                <span>Hero Image</span>
+              </motion.button>
+
+              {/* Pulsante Esporta */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleExport}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
+              >
+                <SafeIcon icon={FiDownload} className="w-4 h-4" />
+                <span>Esporta</span>
+              </motion.button>
+
+              {/* Pulsante Importa */}
+              <label className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors cursor-pointer">
+                <SafeIcon icon={FiUpload} className="w-4 h-4" />
+                <span>Importa</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImport}
+                  className="hidden"
+                />
+              </label>
+
+              {/* Pulsante Salva */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
+              >
+                <SafeIcon icon={isSaving ? FiClock : FiSave} className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} />
+                <span>{isSaving ? 'Salvando...' : 'Salva'}</span>
+              </motion.button>
+
+              {/* Pulsante Backup */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreateBackup}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-cyan-100 text-cyan-700 hover:bg-cyan-200 transition-colors"
+              >
+                <SafeIcon icon={FiDatabase} className="w-4 h-4" />
+                <span>Backup</span>
+              </motion.button>
+
+              {/* Pulsante Ripristina */}
+              <label className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors cursor-pointer">
+                <SafeIcon icon={FiUpload} className="w-4 h-4" />
+                <span>Ripristina</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleRestoreBackup}
+                  className="hidden"
+                />
+              </label>
+
+              {/* Pulsante Impostazioni */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowSettings(true)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              >
+                <SafeIcon icon={FiSettings} className="w-4 h-4" />
+                <span>Impostazioni</span>
+              </motion.button>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            {/* Pulsante Modifica/Visualizza */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleToggleEdit}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isEditMode 
-                  ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-              }`}
-            >
-              <SafeIcon icon={isEditMode ? FiEye : FiEdit3} className="w-4 h-4" />
-              <span>{isEditMode ? 'Visualizza' : 'Modifica'}</span>
-            </motion.button>
+          {/* Messaggio di stato */}
+          <AnimatePresence>
+            {message && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className={`px-4 py-2 text-sm text-center ${
+                  message.type === 'success' 
+                    ? 'bg-green-100 text-green-700' 
+                    : message.type === 'error'
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-blue-100 text-blue-700'
+                }`}
+              >
+                {message.text}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
 
-            {/* Pulsante Colori & CSS */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowSectionCustomizer(true)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-            >
-              <SafeIcon icon={FiDroplet} className="w-4 h-4" />
-              <span>Colori & CSS</span>
-            </motion.button>
-
-            {/* Pulsante Hero Image */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowHeroImageEditor(true)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors"
-            >
-              <SafeIcon icon={FiImage} className="w-4 h-4" />
-              <span>Hero Image</span>
-            </motion.button>
-
-            {/* Pulsante Esporta */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleExport}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
-            >
-              <SafeIcon icon={FiDownload} className="w-4 h-4" />
-              <span>Esporta</span>
-            </motion.button>
-
-            {/* Pulsante Importa */}
-            <label className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors cursor-pointer">
-              <SafeIcon icon={FiUpload} className="w-4 h-4" />
-              <span>Importa</span>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleImport}
-                className="hidden"
-              />
-            </label>
-
-            {/* Pulsante Salva */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
-            >
-              <SafeIcon icon={isSaving ? FiClock : FiSave} className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} />
-              <span>{isSaving ? 'Salvando...' : 'Salva'}</span>
-            </motion.button>
-
-            {/* Pulsante Backup */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleCreateBackup}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-cyan-100 text-cyan-700 hover:bg-cyan-200 transition-colors"
-            >
-              <SafeIcon icon={FiDatabase} className="w-4 h-4" />
-              <span>Backup</span>
-            </motion.button>
-
-            {/* Pulsante Ripristina */}
-            <label className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors cursor-pointer">
-              <SafeIcon icon={FiUpload} className="w-4 h-4" />
-              <span>Ripristina</span>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleRestoreBackup}
-                className="hidden"
-              />
-            </label>
-
-            {/* Pulsante Impostazioni */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowSettings(true)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-            >
-              <SafeIcon icon={FiSettings} className="w-4 h-4" />
-              <span>Impostazioni</span>
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Messaggio di stato */}
-        <AnimatePresence>
-          {message && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`px-4 py-2 text-sm text-center ${
-                message.type === 'success' 
-                  ? 'bg-green-100 text-green-700' 
-                  : message.type === 'error'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-blue-100 text-blue-700'
-              }`}
-            >
-              {message.text}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Modal Impostazioni */}
+      {/* Modal Impostazioni: sempre accessibile */}
       <AnimatePresence>
         {showSettings && (
           <motion.div
