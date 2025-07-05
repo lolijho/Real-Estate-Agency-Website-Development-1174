@@ -40,7 +40,7 @@ const PageLoader = ({ isLoading, onComplete }) => {
 
   return (
     <div className="page-loader-overlay">
-      <div className="page-loader-container">
+      <div className="page-loader-center">
         {/* Casetta SVG */}
         <div className="house-container">
           <svg 
@@ -63,7 +63,6 @@ const PageLoader = ({ isLoading, onComplete }) => {
                 <rect x="73" y="60" width="12" height="12" />
               </clipPath>
             </defs>
-            
             {/* Contorno bianco della casa */}
             <g fill="none" stroke="white" strokeWidth="2">
               {/* Tetto */}
@@ -76,7 +75,6 @@ const PageLoader = ({ isLoading, onComplete }) => {
               <rect x="35" y="60" width="12" height="12" />
               <rect x="73" y="60" width="12" height="12" />
             </g>
-            
             {/* Riempimento nero che cresce */}
             <rect 
               x="0" 
@@ -88,19 +86,16 @@ const PageLoader = ({ isLoading, onComplete }) => {
             />
           </svg>
         </div>
-        
         {/* Testo di caricamento */}
-        <div className="loading-text">
-          <h3>Affitti Urbi</h3>
-          <p>Caricamento in corso...</p>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <span className="progress-text">{Math.round(progress)}%</span>
+        <h3>Affitti Urbi</h3>
+        <p>Caricamento in corso...</p>
+        <div className="progress-bar">
+          <div 
+            className="progress-fill" 
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
+        <span className="progress-text">{Math.round(progress)}%</span>
       </div>
     </div>
   );
