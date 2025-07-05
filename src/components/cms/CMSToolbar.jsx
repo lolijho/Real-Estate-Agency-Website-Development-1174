@@ -13,11 +13,13 @@ import {
   FiCode,
   FiDatabase,
   FiClock,
-  FiCheckCircle
+  FiCheckCircle,
+  FiImage
 } from 'react-icons/fi';
 import SafeIcon from '../../common/SafeIcon';
 import { useCMS } from '../../context/CMSContext';
 import { useAuth } from '../../context/AuthContext';
+import HeroImageEditor from './HeroImageEditor';
 
 const CMSToolbar = () => {
   const { isAdmin } = useAuth();
@@ -40,6 +42,7 @@ const CMSToolbar = () => {
   
   const [showSettings, setShowSettings] = useState(false);
   const [showSectionCustomizer, setShowSectionCustomizer] = useState(false);
+  const [showHeroImageEditor, setShowHeroImageEditor] = useState(false);
   const [selectedSection, setSelectedSection] = useState('hero');
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -184,6 +187,17 @@ const CMSToolbar = () => {
             >
               <SafeIcon icon={FiDroplet} className="w-4 h-4" />
               <span>Colori & CSS</span>
+            </motion.button>
+
+            {/* Pulsante Hero Image */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowHeroImageEditor(true)}
+              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors"
+            >
+              <SafeIcon icon={FiImage} className="w-4 h-4" />
+              <span>Hero Image</span>
             </motion.button>
 
             {/* Pulsante Esporta */}
@@ -534,6 +548,12 @@ const CMSToolbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hero Image Editor */}
+      <HeroImageEditor 
+        isOpen={showHeroImageEditor} 
+        onClose={() => setShowHeroImageEditor(false)} 
+      />
     </>
   );
 };
